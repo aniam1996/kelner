@@ -1,0 +1,9 @@
+class Client:
+	def __init__(self, gender):
+		self.gender = gender
+	
+	def getGender(self):
+		return self.gender
+		
+  # więcej danych o kliencie które można potem
+	# używać w konwersacji
