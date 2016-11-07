@@ -1,22 +1,12 @@
 
 
-zamowienie= []
 x=input()
-zamowienie.append(x)
+zamowienie= set(x.split())
 
+wykresl = {"poprosze", "prosze" , "dziekuje"}
 
+hasla= zamowienie.difference(wykresl)
 
-notatka = ",".join(zamowienie)
+print(zamowienie)
 
-hasla = notatka.split(" ")
-x=[]
-
-for haslo in hasla:
-    if haslo=="poprosze" or haslo=="prosze" or haslo=="," or haslo=="dziekuje" or haslo==" " or haslo=="." or haslo=="i" or haslo=="oraz" or haslo=="z":
-        continue
-    else:
-        x.append(haslo)
-
-
-
-print(x)
+print(hasla)
