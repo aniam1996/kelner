@@ -1,12 +1,12 @@
+x=input()                           #wpisz zdanie
+zamowienie= set(x.split())          #tworzenie zbioru wyrazów zdania
+
+f=open('wykresl.txt','r').read()    #otwórz plik tekstowy z wyrazami do wykreślenia w trybie read
+wykresl=set(f.split('\n'))          #tworzenie zbioru z hasłami do wykreślenia
 
 
-x=input()
-zamowienie= set(x.split())
+hasla= zamowienie.difference(wykresl)  # zbiór wyrazów po wykreśleniu
 
-wykresl = {"poprosze", "prosze" , "dziekuje"}
-
-hasla= zamowienie.difference(wykresl)
-
-print(zamowienie)
 
 print(hasla)
+
