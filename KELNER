@@ -1,0 +1,48 @@
+dict = {'Propozycja':True, 'Posilek':False, 'Napoj':False, 'ID':1, 'Suma':0.00}
+
+menujedzenie = open('MENUJEDZENIE.txt')
+menupicie = open('MENUPICIE.txt')
+liczbajedz = len(open('MENUJEDZENIE.txt','rU').readlines())
+liczbapic = len(open('MENUPICIE.txt','rU').readlines())
+liczbapol1 = len(open('PROPOZYCJAP.txt','rU').readlines())
+liczbapol2 = len(open('PROPOZYCJAN.txt','rU').readlines())
+import random
+import linecache
+
+def RandomP():
+    "Podaje losową pozycje z menu picia bądź jedzenia"
+    liczba = random.randint(1,liczbajedz)
+    wiersz = linecache.getline('MENUJEDZENIE.txt',liczba)
+    parts = wiersz.split(",")
+    liczba1 = random.randint(1, liczbapol1)
+    wiersz1 = linecache.getline('PROPOZYCJAP.txt', liczba1)
+    print(wiersz1.format(liczba,parts[1]))
+
+
+def RandomN():
+    "Podaje losową pozycje z menu picia bądź jedzenia"
+    liczba = random.randint(1,liczbajedz)
+    wiersz = linecache.getline('MENUPICIE.txt',liczba)
+    parts = wiersz.split(",")
+    liczba1 = random.randint(1, liczbapol2)
+    wiersz1 = linecache.getline('PROPOZYCJAN.txt', liczba1)
+    print(wiersz1.format(liczba,parts[1]))
+
+
+if dict['Propozycja']:
+        if not dict['Posilek']:
+            RandomP()
+        if not dict['Napoj']:
+            RandomN()
+        else:
+            print("Zamówiłeś już jedzenie i picie :)")
+else:
+    if dict['Posilek'] and dict['Napoj']:
+            print("Czy to już wszystko?")
+    else:
+        if dict['Posilek']:
+            print("Czy chciałby pan zamówić coś do picia?")
+        if dict['Napoj']:
+            print("Czy chciałby pan zamówić coś do jedzenia?")
+        else:
+            print("Czy chciałby pan coś zamówić?")
