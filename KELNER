@@ -69,7 +69,7 @@ def UstawMenu():
             nazwanap = parts[1]
 
 def Propozycja():
-    ""
+    "Reaguje w przypadku prośby klienta o propozycję posiłku"
     if not dict['Posilek']:
         if not dict['Napoj']:
               RandomP()
