@@ -1,0 +1,3 @@
+Danie=True
+Napoj=True
+Propozycja=False
