@@ -1,20 +1,42 @@
-import random
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import linecache
+import random
+import codecs
 
-dict = {'Propozycja':True, 'Posilek':True, 'Napoj':True, 'IDP':2, 'IDN':2}
+dict = {'Typ': 'Propozycja', 'Posilek': True, 'Napoj': False, 'IDP': 2, 'IDN': 0}
 
-menujedzenie = open('MENUJEDZENIE.txt')                     #otwiera plik menujedzenie.txt
-menupicie = open('MENUPICIE.txt')                           #otwiera plik menupicie.txt
-liczbajedz = len(open('MENUJEDZENIE.txt','rU').readlines()) #liczbajedz = ilość wierszy w menujedzenie.txt
-liczbapic = len(open('MENUPICIE.txt','rU').readlines())     #liczbapic = ilość wierszy w menupicie.txt
-liczbapol1 = len(open('PROPOZYCJAP.txt','rU').readlines())  #ilość wierszy w popozycjap
-liczbapol2 = len(open('PROPOZYCJAN.txt','rU').readlines())  #ilość wierszy w propozycjan
+liczbajedz = len(open('MENUJEDZENIE.txt', 'rU').readlines())  # liczbajedz = ilość wierszy w menujedzenie.txt
+liczbapic = len(open('MENUPICIE.txt', 'rU').readlines())  # liczbapic = ilość wierszy w menupicie.txt
+
 
 ####################################################################################################
 ############################        F U N K C J E        ###########################################
 ####################################################################################################
 ####################################################################################################
 
+def ustalPlec():
+    "Ustala płeć klienta"
+    print("Proszę wybrać swoją płeć:\n 1 --- mężczyzna\n 2 --- kobieta\n")
+    plec = input()
+    while (plec != '1' and plec !='2'):
+        print("Wprowadziłeś złe dane. Proszę spróbować ponownie.\n 1 --- mężczyzna\n 2 --- kobieta\n")
+        plec = input()
+    if (plec == '1'):
+        plec = "mężczyzna"
+        global odpowiedzi
+        odp = codecs.open('MALE.txt', 'r', 'utf-8')     ##otwiera utf-8 tak żeby były polskie znaki
+        odpowiedzi = odp.read()
+        odpowiedzi = odpowiedzi.split('\r\n')           ##każda linijka tekstu to jedna pozycja na liście, zaczynając od 0
+        print(odpowiedzi[0])
+    if (plec == '2'):
+        plec = "kobieta"
+        global odpowiedzi
+        odp = codecs.open('FEMALE.txt', 'r', 'utf-8')
+        odpowiedzi = odp.read()
+        odpowiedzi = odpowiedzi.split('\r\n')
+        print(odpowiedzi[0])
 
 def num(s):
     "zamienia zmienną na floata"
@@ -29,89 +51,89 @@ def LiczSume():
         jedzenie = part[2]
         suma = suma + num(jedzenie)
     if dict['IDN'] != 0:
-        picie = linecache.getline('MENUPICIE.txt.', dict['IDN'])
+        picie = linecache.getline('MENUPICIE.txt', dict['IDN'])
         part = picie.split(",")
         picie = part[2]
         suma = suma + num(picie)
     return (suma)
 
+
 def RandomP():
     "Podaje losową pozycje z menu posiłków"
-    liczba = random.randint(1,liczbajedz)
-    wiersz = linecache.getline('MENUJEDZENIE.txt',liczba)
+    liczba = random.randint(1, liczbajedz)
+    wiersz = linecache.getline('MENUJEDZENIE.txt', liczba)
     parts = wiersz.split(",")
-    liczba1 = random.randint(1, liczbapol1)
-    wiersz1 = linecache.getline('PROPOZYCJAP.txt', liczba1)
-    print(wiersz1.format(liczba,parts[1]))
+    print(odpowiedzi[2].format(liczba, parts[1]))
 
 
 def RandomN():
     "Podaje losową pozycje z menu napojów"
-    liczba = random.randint(1,liczbajedz)
-    wiersz = linecache.getline('MENUPICIE.txt',liczba)
+    liczba = random.randint(1, liczbapic)
+    wiersz = linecache.getline('MENUPICIE.txt', liczba)
     parts = wiersz.split(",")
-    liczba1 = random.randint(1, liczbapol2)
-    wiersz1 = linecache.getline('PROPOZYCJAN.txt', liczba1)
-    print(wiersz1.format(liczba,parts[1]))
+    print(odpowiedzi[1].format(liczba, parts[1]))
+
 
 def UstawMenu():
     "Pobiera dane z dict i ustawia nazwy zamówionego posiłku i/lub jedzenia, jeżeli takie jest."
     global nazwanap
     global nazwapos
     if (dict['IDP'] != 0):
-            nazwapos = linecache.getline('MENUJEDZENIE.txt',dict['IDP'])
-            parts = nazwapos.split(",")
-            nazwapos = parts[1]
+        nazwapos = linecache.getline('MENUJEDZENIE.txt', dict['IDP'])
+        parts = nazwapos.split(",")
+        nazwapos = parts[1]
 
     if (dict['IDN'] != 0):
-            nazwanap = linecache.getline('MENUPICIE.txt',dict['IDN'])
-            parts = nazwanap.split(",")
-            nazwanap = parts[1]
+        nazwanap = linecache.getline('MENUPICIE.txt', dict['IDN'])
+        parts = nazwanap.split(",")
+        nazwanap = parts[1]
+
 
 def Propozycja():
-    "Reaguje w przypadku prośby klienta o propozycję posiłku"
-    if not dict['Posilek']:
+    "Obsluguje klienta kiedy ten poprosił o jakąś propozycję."
+    while 1 == 1:
+        if not dict['Posilek']:
+            if not dict['Napoj']:
+                RandomP()
+                RandomN()
+                break
+            if dict['Napoj']:
+                print(odpowiedzi[3].format(dict['IDN'], nazwanap))
+                RandomP()
+                break
         if not dict['Napoj']:
-              RandomP()
-              RandomN()
-        if dict['Napoj']:
-            print("Zamowiles napoj nr %d, %s." % (dict['IDN'], nazwanap))
-            RandomP()
-    if not dict['Napoj']:
-        print("Zamowiles posilek nr %d, %s." % (dict['IDP'], nazwapos))
-        RandomN()
-    if dict['Posilek'] and dict['Napoj']:
-        suma = LiczSume()
-        print("Zamowiles juz jedzenie i picie. "
-        "Twoje zamowienie to: % s, % s. Suma do zaplacenia: %.2f zl. "
-        "Czy zamowienie sie zgadza?" % (nazwapos, nazwanap, suma))
+            print(odpowiedzi[4].format(dict['IDP'], nazwapos))
+            RandomN()
+            break
+        if dict['Posilek'] and dict['Napoj']:
+            suma = LiczSume()
+            print("Zamowiles juz jedzenie i picie. "
+                  "Twoje zamowienie to: % s, % s. Suma do zaplacenia: %.2f zl. "
+                  "Czy zamowienie sie zgadza?" % (nazwapos, nazwanap, suma))
+            break
+
+
+def Koniec():
+    "Obsluguje klienta kiedy ten skonczyl zamawiac."
+    suma = LiczSume()
+    print("Twoje zamowienie to: %s, %s. Suma do zaplacenia: %.2f zl." % (nazwapos, nazwanap, suma))
+    print("Za chwile przyniose zamowienie.")
+
 
 ####################################################################################################
 ############################        P R O G R A M        ###########################################
 ####################################################################################################
 ####################################################################################################
 
+ustalPlec() #TYLKO RAZ
+
+
 UstawMenu()
-if dict['Propozycja']:
+
+
+if dict['Typ'] == 'Propozycja':
     Propozycja()
 
+if dict['Typ'] == 'Koniec':
+    Koniec()
 
-
-
-
-else:
-    if dict['Posilek'] and dict['Napoj']:
-            print("Czy to już wszystko?")
-    else:
-        if dict['Posilek']:
-            print("Czy chciałby pan zamówić coś do picia?")
-        if dict['Napoj']:
-            print("Czy chciałby pan zamówić coś do jedzenia?")
-        else:
-            print("Twoje zamówienie to: % s, % s. Suma do zapłacenia: %.2f zł. Czy zamówienie się zgadza?" % (nazwapos, nazwanap, dict['Suma']))
-
-
-
-
-menujedzenie.close()
-menupicie.close()
