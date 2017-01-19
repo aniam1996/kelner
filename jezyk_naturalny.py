@@ -34,7 +34,7 @@ slownik = {"żurek": "zurek", "żurku": "zurek", "żurkiem": "zurek","zurek": "z
            "niegazowana":"niegaz","niegazowanej":"niegaz","niegazowaną":"niegaz",
            "lemoniada": "lemoniada","lemoniady": "lemoniada", "lemoniadzie": "lemoniada", "lemoniadę": "lemoniada", "lemoniadą": "lemoniada","lemoniade":"lemoniada",
            "proponować": "propozycja", "proponuje": "propozycja", "zaproponuje": "propozycja","zaproponować": "propozycja","propozycji": "propozycja",
-           "proponowac": "propozycja","zaproponowac": "propozycja",
+           "proponowac": "propozycja","zaproponowac": "propozycja","zaproponujesz":"propozycja",
            "jedzenie":"jedzenie","jedzenia":"jedzenie","jedzeniu":"jedzenie","jedzeniem":"jedzenie",
            "danie":"danie","dania":"danie","dań":"danie","dan":"danie",
            "picia":"picie","picie":"picie","piciu":"picie","piciem":"picie",
@@ -44,8 +44,9 @@ slownik = {"żurek": "zurek", "żurku": "zurek", "żurkiem": "zurek","zurek": "z
 hasla = []                                  #definiujemy tablice w ktorej znajdowac sie beda slowa kluczowe
 slowo=list(slownik.keys())                  #tworzymy liste w ktorej znajduja sie klucze ze slownika
 
-for element in zamowienie:                  # sprawdzamy kazde slowo z zamowienia, jesli znajduje sie ono w slowniku
-    if element in slowo:                    # jako klucz to dodajemy je do tablicy z haslami
+for element in zamowienie:
+    element=element.lower()                 #zamień wszystkie litery na małe
+    if element in slowo:                    # sprawdzamy kazde slowo z zamowienia, jesli znajduje sie ono w slowniku jako klucz to dodajemy je do tablicy z haslami
             hasla.append(slownik[element])
 
 
@@ -55,12 +56,12 @@ p=open('propozycje.txt','w')
 
 if "propozycja" in hasla:                       #klient zażyczył sobie propozycji
     proponowanie=True
-    if "picie" or "napoj" in hasla:
+    if "picie" in hasla or "napoj" in hasla:
         p.write("napoj" +'\n')
-    elif "danie" or "jedzenie" in hasla:
+    elif "danie" in hasla or "jedzenie" in hasla:
         p.write("jedzenie" + '\n')
     else:
-        p.write("all" + '\n')
+        p.write("napoj" + '\n' + "jedzenie" + '\n')
 
 
 ####################################################################################################################
@@ -95,7 +96,6 @@ for haslo in hasla:
 #######################################################################################################################
 
 podsumowanie={"Propozycja":proponowanie, "Napoj":picie, "Danie":jedzenie}
-print (podsumowanie)
 
 zapisz=["%s=%s" % (k, v) for k, v in podsumowanie.items()]
 
