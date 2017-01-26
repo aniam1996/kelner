@@ -10,9 +10,7 @@ for x in zapisz:             #dodajemy slowa do tablicy 'zamowienie'
 
 
 
-slownik = {"tak":"tak","poprosze":"tak","poproszę":"tak","poprosimy":"tak","dobrze":"tak","spróbuję":"tak","sprobuje":"tak","spróbuje":"tak",
-           "rachunek":"rachunek","zaplacic":"rachunek", "zapłacić":"rachunek",
-           }
+slownik = {"tak":"tak","poprosze":"tak","poproszę":"tak","poprosimy":"tak","dobrze":"tak","spróbuję":"tak","sprobuje":"tak","spróbuje":"tak"}
 
 hasla = []                                  #definiujemy tablice w ktorej znajdowac sie beda slowa kluczowe
 slowo=list(slownik.keys())                  #tworzymy liste w ktorej znajduja sie klucze ze slownika
@@ -25,13 +23,10 @@ for element in zamowienie:
 
 ####################################################################################################################
 
-potw=open('potwierdzenie.txt','w')
+wynik=False
 
-if "rachunek" in hasla:
-    potw.write("rachunek"+'\n')
-elif "tak" in hasla:
-    potw.write("tak"+'\n')
-else:
-    potw.write("nie"+'\n')
+if "tak" in hasla:
+    wynik=True
 
-potw.close()
+print (wynik)
+
