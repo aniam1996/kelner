@@ -1,0 +1,15 @@
+1,kotlet schabowy,11.50,schabowy
+2,bigos,7.00,bigos
+3,zupa żurek,5.00,zurek
+4,zupa rosół,5.00,rosol
+5,zupa krupnik,5.00,krupnik
+6,placek po węgiersku,5.50,placek
+7,filet rybny,9.00,filet
+8,spaghetti bolognese,9.00,spaghetti
+9,dorsz,12.00,dorsz
+10,kasza,4.00,kasza
+11,ryż,4.00,ryz
+12,gotowane warzywa,4.00,warzywa
+13,ziemniaki,4.00,ziemniaki
+14,frytki,4.00,frytki
+15,surówka,4.00,surowki
