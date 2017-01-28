@@ -1,0 +1,7 @@
+1,Cola,5.00,cola
+2,Pepsi,5.00,pepsi
+3,Fanta,5.00,fanta
+4,lemoniada,4.50,lemoniada
+5,herbata,4.00,herbata
+6,woda gazowana,3.50,gaz
+7,woda niegazowana,3.50,niegaz
