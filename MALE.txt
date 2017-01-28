@@ -1,8 +1,0 @@
-Witamy Pana w restauracji Kaceka. Co chciałby Pan zamówić?
-Do picia proponuję pozycję numer {0} - {1}.
-Do jedzenia proponuję pozycję numer {0} - {1}.
-Zamówił Pan napój nr {0} - {1}.
-Zamówił Pan posiłek nr {0} - {1}.
-Dobrze, czyli Pana zamówienie to:
-Czy zamówienie się zgadza?
-Dziękujemy za skorzystanie z naszych usług! Polecamy się na przyszłość.
