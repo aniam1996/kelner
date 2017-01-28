@@ -40,6 +40,8 @@ def ustalPlec():
 def jezykNaturalny():
     """Obsługuje to co napisze klient."""
     global proponowanie
+    pytanie = odpowiedzi[10]
+    print(pytanie)
     x = input()  # wpisz zdanie
     zapisz = x.split()  # pod zmienną 'zapisz' podstawiamy liste slow oddzielonych przecinkiem
     zamowienie = []  # tworzymy tablice 'zmowienie'
@@ -258,7 +260,6 @@ while not koniec:
         suma = UstawMenu(suma)
         if proponowanie:
             suma = Propozycja(suma)
-        print(suma)
         konieczam = Upewnij()
     zachwileprzyn = odpowiedzi[7]
     print(zachwileprzyn)
