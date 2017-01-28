@@ -5,4 +5,6 @@ Zamówiła Pani napój nr {0} - {1}.
 Zamówiła Pani posiłek nr {0} - {1}.
 Dobrze, czyli Pani zamówienie to:
 Czy zamówienie się zgadza?
+Dobrze. Za chwilę przyniosę zamówienie.
+Należy się {0}.
 Dziękujemy za skorzystanie z naszych usług! Polecamy się na przyszłość.
