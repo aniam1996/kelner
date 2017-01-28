@@ -256,6 +256,7 @@ koniec = False
 konieczam = False
 while not koniec:
     while not konieczam:
+
         jezykNaturalny()
         suma = UstawMenu(suma)
         if proponowanie:
