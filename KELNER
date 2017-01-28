@@ -53,7 +53,8 @@ def jezykNaturalny():
                "krupnik": "krupnik", "krupnika": "krupnik", "krupnikiem": "krupnik", "krupniku": "krupnik",
                "bigos": "bigos", "bigosu": "bigos", "bigosem": "bigos", "bigosie": "bigos",
                "placek": "placek", "placka": "placek", "plackiem": "placek", "placku": "placek",
-               "schabowy": "schabowy", "schabowego": "schabowy", "schabowym": "schabowy",
+               "schabowy": "schabowy", "schabowego": "schabowy", "schabowym": "schabowy", "schab":"schabowy",
+               "schaba":"schabowy",
                "filet": "filet", "filetu": "filet", "filetem": "filet", "filecie": "filet",
                "spaghetti": "spaghetti",
                "surówki": "surowki", "surówek": "surowki", "surówkom": "surowki", "surówkami": "surowki",
@@ -81,7 +82,7 @@ def jezykNaturalny():
                "proponować": "propozycja", "proponuje": "propozycja", "zaproponuje": "propozycja","zaproponować": "propozycja","propozycji": "propozycja",
                "proponowac": "propozycja","zaproponowac": "propozycja","zaproponujesz":"propozycja","propozycja":"propozycja","zaproponował":"propozycja",
                "proponuj":"propozycja", "poleciłby": "propozycja", "polecenia": "propozycja","poleć": "propozycja", "polecacie":"propozycja",
-               "polecić":"propozycja", "proponujecie":"propozycja", "polecasz":"propozycja",
+               "polecić":"propozycja", "proponujecie":"propozycja", "polecasz":"propozycja", "propozycję":"propozycja",
                "jedzenie": "jedzenie", "jedzenia": "jedzenie", "jedzeniu": "jedzenie", "jedzeniem": "jedzenie",
                "danie": "danie", "dania": "danie", "dań": "danie", "dan": "danie",
                "picia": "picie", "picie": "picie", "piciu": "picie", "piciem": "picie",
@@ -206,14 +207,14 @@ def Propozycja(suma):
     if n != 0:
         wiersz = linecache.getline('MENUPICIE.txt', n)
         parts = wiersz.split(",")
-        with open("ZAMOWIENIE.txt","a") as zam:
+        with codecs.open("ZAMOWIENIE.txt","a","utf-8") as zam:
             zam.write(parts[1] + "\n")
         suma = suma + num(parts[2])
 
     if p != 0:
         wiersz = linecache.getline('MENUJEDZENIE.txt', p)
         parts = wiersz.split(",")
-        with open("ZAMOWIENIE.txt", "a") as zam:
+        with codecs.open("ZAMOWIENIE.txt", "a","utf-8") as zam:
             zam.write(parts[1] + "\n")
         suma = suma + num(parts[2])
 
@@ -222,7 +223,7 @@ def Propozycja(suma):
 def Upewnij():
     s = ", "
     czylizam = odpowiedzi[5]
-    zam = codecs.open("ZAMOWIENIE.txt","r","utf-8")
+    zam = codecs.open("ZAMOWIENIE.txt", "r", "utf-8")
     zam = zam.read()
     zam = zam.split("\r\n")
     zam.pop()
@@ -256,7 +257,10 @@ koniec = False
 konieczam = False
 while not koniec:
     while not konieczam:
-
+        suma = 0
+        with open("ZAMOWIENIE.txt", "w") as zam:
+            zam.seek(0)
+            zam.truncate()
         jezykNaturalny()
         suma = UstawMenu(suma)
         if proponowanie:
