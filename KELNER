@@ -5,135 +5,264 @@ import linecache
 import random
 import codecs
 
-dict = {'Typ': 'Propozycja', 'Posilek': True, 'Napoj': False, 'IDP': 2, 'IDN': 0}
-
-liczbajedz = len(open('MENUJEDZENIE.txt', 'rU').readlines())  # liczbajedz = ilość wierszy w menujedzenie.txt
-liczbapic = len(open('MENUPICIE.txt', 'rU').readlines())  # liczbapic = ilość wierszy w menupicie.txt
-
-
-####################################################################################################
-############################        F U N K C J E        ###########################################
-####################################################################################################
-####################################################################################################
+with open("MENUJEDZENIE.txt","r") as jedz:
+    liczbajedz = sum(1 for line in jedz)
+with open("MENUPICIE.txt","r") as jedz:
+    liczbapic = sum(1 for line in jedz)
+suma = 0
+######################################################################################################
+############################        F U N K C J E        #############################################
+######################################################################################################
+######################################################################################################
 
 def ustalPlec():
-    "Ustala płeć klienta"
+    """Ustala płeć klienta"""
+    global odpowiedzi
     print("Proszę wybrać swoją płeć:\n 1 --- mężczyzna\n 2 --- kobieta\n")
     plec = input()
     while (plec != '1' and plec !='2'):
         print("Wprowadziłeś złe dane. Proszę spróbować ponownie.\n 1 --- mężczyzna\n 2 --- kobieta\n")
         plec = input()
-    if (plec == '1'):
+    if plec == '1':
         plec = "mężczyzna"
-        global odpowiedzi
         odp = codecs.open('MALE.txt', 'r', 'utf-8')     ##otwiera utf-8 tak żeby były polskie znaki
         odpowiedzi = odp.read()
         odpowiedzi = odpowiedzi.split('\r\n')           ##każda linijka tekstu to jedna pozycja na liście, zaczynając od 0
         print(odpowiedzi[0])
-    if (plec == '2'):
+    if plec == '2':
         plec = "kobieta"
-        global odpowiedzi
         odp = codecs.open('FEMALE.txt', 'r', 'utf-8')
         odpowiedzi = odp.read()
         odpowiedzi = odpowiedzi.split('\r\n')
-        print(odpowiedzi[0])
+        powitanie = odpowiedzi[0]
+        print(powitanie)
+
+def jezykNaturalny():
+    """Obsługuje to co napisze klient."""
+    global proponowanie
+    x = input()  # wpisz zdanie
+    zapisz = x.split()  # pod zmienną 'zapisz' podstawiamy liste slow oddzielonych przecinkiem
+    zamowienie = []  # tworzymy tablice 'zmowienie'
+    for x in zapisz:  # dodajemy slowa do tablicy 'zamowienie'
+        zamowienie.append(x)
+    slownik = {"żurek": "zurek", "żurku": "zurek", "żurkiem": "zurek", "zurek": "zurek", "zurku": "zurek",
+               "zurkiem": "zurek",
+               "rosół": "rosol", "rosołem": "rosol", "rosol": "rosol", "rosolem": "rosol",
+               "krupnik": "krupnik", "krupnika": "krupnik", "krupnikiem": "krupnik", "krupniku": "krupnik",
+               "bigos": "bigos", "bigosu": "bigos", "bigosem": "bigos", "bigosie": "bigos",
+               "placek": "placek", "placka": "placek", "plackiem": "placek", "placku": "placek",
+               "schabowy": "schabowy", "schabowego": "schabowy", "schabowym": "schabowy",
+               "filet": "filet", "filetu": "filet", "filetem": "filet", "filecie": "filet",
+               "spaghetti": "spaghetti",
+               "surówki": "surowki", "surówek": "surowki", "surówkom": "surowki", "surówkami": "surowki",
+               "surówkach": "surowki", "surówkę": "surowki", "surówką": "surowki",
+               "surowki": "surowki", "surowek": "surowki", "surowkom": "surowki", "surowkami": "surowki",
+               "surowkach": "surowki", "surówke": "surowki", "surowka": "surowki",
+               "ziemniaki": "ziemniaki", "ziemniaków": "ziemniaki", "ziemniakom": "ziemniaki",
+               "ziemniakami": "ziemniaki", "ziemniakach": "ziemniaki", "ziemniakow": "ziemniaki",
+               "kasza": "kasza", "kaszy": "kasza", "kaszę": "kasza", "kaszą": "kasza", "kasze": "kasza",
+               "ryż": "ryz", "ryżu": "ryz", "ryżowi": "ryz", "ryżem": "ryz", "ryz": "ryz", "ryzu": "ryz",
+               "ryzowi": "ryz", "ryzem": "ryz",
+               "warzywa": "warzywa", "warzyw": "warzywa", "warzywom": "warzywa", "warzywami": "warzywa",
+               "warzywach": "warzywa",
+               "dorsz": "dorsz", "dorsza": "dorsz", "dorszowi": "dorsz", "dorszem": "dorsz", "dorszu": "dorsz",
+               "frytki": "frytki", "frytek": "frytki", "frytkom": "frytki", "frytkami": "frytki", "frytkach": "frytki",
+               "cola": "cola", "coli": "cola", "cole": "cola", "colę": "cola", "colą": "cola",
+               "pepsi": "pepsi",
+               "fanta": "fanta", "fanty": "fanta", "fante": "fanta", "fantę": "fanta", "fantą": "fanta",
+               "herbata": "herbata", "herbaty": "herbata", "herbatę": "herbata", "herbate": "herbata",
+               "herbatą": "herbata",
+               "gazowana": "gaz", "gazowaną": "gaz", "gazowanej": "gaz",
+               "niegazowana": "niegaz", "niegazowanej": "niegaz", "niegazowaną": "niegaz",
+               "lemoniada": "lemoniada", "lemoniady": "lemoniada", "lemoniadzie": "lemoniada", "lemoniadę": "lemoniada",
+               "lemoniadą": "lemoniada", "lemoniade": "lemoniada",
+               "proponować": "propozycja", "proponuje": "propozycja", "zaproponuje": "propozycja","zaproponować": "propozycja","propozycji": "propozycja",
+               "proponowac": "propozycja","zaproponowac": "propozycja","zaproponujesz":"propozycja","propozycja":"propozycja","zaproponował":"propozycja",
+               "proponuj":"propozycja", "poleciłby": "propozycja", "polecenia": "propozycja","poleć": "propozycja", "polecacie":"propozycja",
+               "polecić":"propozycja", "proponujecie":"propozycja", "polecasz":"propozycja",
+               "jedzenie": "jedzenie", "jedzenia": "jedzenie", "jedzeniu": "jedzenie", "jedzeniem": "jedzenie",
+               "danie": "danie", "dania": "danie", "dań": "danie", "dan": "danie",
+               "picia": "picie", "picie": "picie", "piciu": "picie", "piciem": "picie",
+               "napój": "napoj", "napoj": "napoj", "napoju": "napoj", "napojem": "napoj"
+               }
+    hasla = []  # definiujemy tablice w ktorej znajdowac sie beda slowa kluczowe
+    slowo = list(slownik.keys())  # tworzymy liste w ktorej znajduja sie klucze ze slownika
+    for element in zamowienie:
+        element = element.lower()  # zamień wszystkie litery na małe
+        if element in slowo:  # sprawdzamy kazde slowo z zamowienia, jesli znajduje sie ono w slowniku jako klucz to dodajemy je do tablicy z haslami
+            hasla.append(slownik[element])
+    proponowanie = False
+    p = open('propozycje.txt', 'w')
+
+    if "propozycja" in hasla:  # klient zażyczył sobie propozycji
+        proponowanie = True
+        if "picie" in hasla or "napoj" in hasla:
+            p.write("napoj" + '\n')
+        elif "danie" in hasla or "jedzenie" in hasla:
+            p.write("jedzenie" + '\n')
+        else:
+            p.write("napoj" + '\n' + "jedzenie" + '\n')
+    picie = False
+    n = open('napoj.txt', 'w')
+    napoje = ['cola', 'pepsi', 'fanta', 'herbata', 'gaz', 'niegaz', 'lemoniada']
+    for haslo in hasla:
+        if haslo in napoje:
+            picie = True
+            n.write(haslo + '\n')
+    n.close()
+    jedzenie = False
+    j = open('jedzenie.txt', 'w')
+    danie = ['zurek', 'rosol', 'krupnik', 'bigos', 'placek', 'schabowy', 'filet', 'spaghetti', 'surowki', 'ziemniaki',
+             'kasza', 'ryz', 'warzywa', 'dorsz', 'frytki']
+    for haslo in hasla:
+        if haslo in danie:
+            jedzenie = True
+            j.write(haslo + '\n')
+
+
+
+
+def UstawMenu(suma):
+    """Pobiera dane z ZAMOWIENIE.txt i ustawia nazwy zamówionych dań."""
+    global zamowionenapoje
+    global zamowionejedzenie
+    with open("MENUPICIE.txt", "r") as zamowienie, open("napoj.txt", "r") as picie, open("ZAMOWIENIE.txt","a") as ostat:
+         picie = [line.rstrip('\n') for line in picie]
+         for line in zamowienie:
+            if any(pic in line for pic in picie):
+                skos = line.split(",")
+                ostat.write(skos[1]+"\n")
+                suma += num(skos[2])
+
+    with open("MENUJEDZENIE.txt", "r") as zamowienie, open("jedzenie.txt", "r") as jedzenie, open("ZAMOWIENIE.txt","a") as ostat:
+        jedzenie = [line.rstrip('\n') for line in jedzenie]
+        for line in zamowienie:
+            if any(pic in line for pic in jedzenie):
+                skos = line.split(",")
+                ostat.write(skos[1]+"\n")
+                suma += num(skos[2])
+    return suma
 
 def num(s):
-    "zamienia zmienną na floata"
+    """zamienia zmienną na floata"""
     return float(s)
-
-def LiczSume():
-    "Liczy sumę zamówienia dokonanego do tej pory"
-    suma = 0.00
-    if dict['IDP'] != 0:
-        jedzenie = linecache.getline('MENUJEDZENIE.txt', dict['IDP'])
-        part = jedzenie.split(",")
-        jedzenie = part[2]
-        suma = suma + num(jedzenie)
-    if dict['IDN'] != 0:
-        picie = linecache.getline('MENUPICIE.txt', dict['IDN'])
-        part = picie.split(",")
-        picie = part[2]
-        suma = suma + num(picie)
-    return (suma)
 
 
 def RandomP():
-    "Podaje losową pozycje z menu posiłków"
+    """Podaje losową pozycje z menu posiłków"""
     liczba = random.randint(1, liczbajedz)
     wiersz = linecache.getline('MENUJEDZENIE.txt', liczba)
     parts = wiersz.split(",")
-    print(odpowiedzi[2].format(liczba, parts[1]))
+    propjedz = odpowiedzi[2].format(liczba, parts[1])
+    print(propjedz)
+    return liczba
 
 
 def RandomN():
-    "Podaje losową pozycje z menu napojów"
+    """Podaje losową pozycje z menu napojów"""
     liczba = random.randint(1, liczbapic)
     wiersz = linecache.getline('MENUPICIE.txt', liczba)
     parts = wiersz.split(",")
-    print(odpowiedzi[1].format(liczba, parts[1]))
+    propnap = odpowiedzi[1].format(liczba, parts[1])
+    print(propnap)
+    return liczba
 
+def SprawdzPropozycja():
+    """Sprawdza czy klient potwierdził propozycję."""
+    x = input()                  # wpisz zdanie
+    zapisz=x.split()             #pod zmienną 'zapisz' podstawiamy liste slow oddzielonych przecinkiem
+    zamowienie = []              # tworzymy tablice 'zmowienie'
+    for x in zapisz:             #dodajemy slowa do tablicy 'zamowienie'
+        zamowienie.append(x)
+    slownik = {"tak":"tak","poprosze":"tak","poproszę":"tak","poprosimy":"tak","dobrze":"tak","spróbuję":"tak","sprobuje":"tak","spróbuje":"tak","okej":"tak",
+               "dobra":"tak","ok":"tak"}
+    hasla = []                                  #definiujemy tablice w ktorej znajdowac sie beda slowa kluczowe
+    slowo=list(slownik.keys())                  #tworzymy liste w ktorej znajduja sie klucze ze slownika
 
-def UstawMenu():
-    "Pobiera dane z dict i ustawia nazwy zamówionego posiłku i/lub jedzenia, jeżeli takie jest."
-    global nazwanap
-    global nazwapos
-    if (dict['IDP'] != 0):
-        nazwapos = linecache.getline('MENUJEDZENIE.txt', dict['IDP'])
-        parts = nazwapos.split(",")
-        nazwapos = parts[1]
+    for element in zamowienie:
+        element=element.lower()                 #zamień wszystkie litery na małe
+        if element in slowo:                    # sprawdzamy kazde slowo z zamowienia, jesli znajduje sie ono w slowniku jako klucz to dodajemy je do tablicy z haslami
+                hasla.append(slownik[element])
+    wynik=False
+    if "tak" in hasla:
+        wynik=True
+    return wynik
 
-    if (dict['IDN'] != 0):
-        nazwanap = linecache.getline('MENUPICIE.txt', dict['IDN'])
-        parts = nazwanap.split(",")
-        nazwanap = parts[1]
+def Propozycja(suma):
+    """Obsluguje klienta kiedy ten poprosił o jakąś propozycję."""
+    prop = codecs.open('propozycje.txt','r','utf-8')
+    propozycja = prop.read()
+    condition = False
+    n = 0
+    p = 0
+    while not condition:
+        if 'napoj' in propozycja:
+             n = RandomN()
+        if 'jedzenie' in propozycja:
+             p = RandomP()
+        condition = SprawdzPropozycja()
+    if n != 0:
+        wiersz = linecache.getline('MENUPICIE.txt', n)
+        parts = wiersz.split(",")
+        with open("ZAMOWIENIE.txt","a") as zam:
+            zam.write(parts[1] + "\n")
+        suma = suma + num(parts[2])
 
+    if p != 0:
+        wiersz = linecache.getline('MENUJEDZENIE.txt', p)
+        parts = wiersz.split(",")
+        with open("ZAMOWIENIE.txt", "a") as zam:
+            zam.write(parts[1] + "\n")
+        suma = suma + num(parts[2])
 
-def Propozycja():
-    "Obsluguje klienta kiedy ten poprosił o jakąś propozycję."
-    while 1 == 1:
-        if not dict['Posilek']:
-            if not dict['Napoj']:
-                RandomP()
-                RandomN()
-                break
-            if dict['Napoj']:
-                print(odpowiedzi[3].format(dict['IDN'], nazwanap))
-                RandomP()
-                break
-        if not dict['Napoj']:
-            print(odpowiedzi[4].format(dict['IDP'], nazwapos))
-            RandomN()
-            break
-        if dict['Posilek'] and dict['Napoj']:
-            suma = LiczSume()
-            print("Zamowiles juz jedzenie i picie. "
-                  "Twoje zamowienie to: % s, % s. Suma do zaplacenia: %.2f zl. "
-                  "Czy zamowienie sie zgadza?" % (nazwapos, nazwanap, suma))
-            break
+    return suma
 
+def Upewnij():
+    s = ", "
+    czylizam = odpowiedzi[5]
+    zam = codecs.open("ZAMOWIENIE.txt","r","utf-8")
+    zam = zam.read()
+    zam = zam.split("\r\n")
+    zam.pop()
+    zam = s.join(zam)
+    czylizam = czylizam + " " + zam + "."
+    print(czylizam)
+    czypasuje = odpowiedzi[6]
+    print (czypasuje)
+    wynik = SprawdzPropozycja()
+    return wynik
 
 def Koniec():
-    "Obsluguje klienta kiedy ten skonczyl zamawiac."
-    suma = LiczSume()
-    print("Twoje zamowienie to: %s, %s. Suma do zaplacenia: %.2f zl." % (nazwapos, nazwanap, suma))
-    print("Za chwile przyniose zamowienie.")
+    """Czyszczenie zamowienia i pozegnanie."""
+    with open("ZAMOWIENIE.txt","w") as zam:
+        zam.seek(0)
+        zam.truncate()
+    cya = odpowiedzi[9]
+    print(cya)
 
 
-####################################################################################################
-############################        P R O G R A M        ###########################################
-####################################################################################################
-####################################################################################################
+    print()
+
+######################################################################################################
+############################        P R O G R A M        #############################################
+######################################################################################################
+######################################################################################################
 
 ustalPlec() #TYLKO RAZ
 
-
-UstawMenu()
-
-
-if dict['Typ'] == 'Propozycja':
-    Propozycja()
-
-if dict['Typ'] == 'Koniec':
-    Koniec()
-
+koniec = False
+konieczam = False
+while not koniec:
+    while not konieczam:
+        jezykNaturalny()
+        suma = UstawMenu(suma)
+        if proponowanie:
+            suma = Propozycja(suma)
+        print(suma)
+        konieczam = Upewnij()
+    zachwileprzyn = odpowiedzi[7]
+    print(zachwileprzyn)
+    naleznosc = odpowiedzi[8].format(suma)
+    print(naleznosc)
+    koniec = True
+Koniec()
