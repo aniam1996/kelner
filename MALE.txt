@@ -1,4 +1,4 @@
-Witamy Pana w restauracji Kaceka.
+Witam Pana w restauracji Quiznak.
 Do picia proponuję pozycję numer {0} - {1}.
 Do jedzenia proponuję pozycję numer {0} - {1}.
 Zamówił Pan napój nr {0} - {1}.
@@ -9,3 +9,6 @@ Dobrze. Za chwilę przyniosę zamówienie.
 Należy się {0:.2f}.
 Dziękujemy za skorzystanie z naszych usług! Polecamy się na przyszłość.
 Co chciałby Pan zamówić?
+W takim razie co chciałby Pan zamówić?
+Czy mógłby Pan wyrazić się inaczej?
+Proszę bardzo, oto Pana zamówienie. Smacznego!
