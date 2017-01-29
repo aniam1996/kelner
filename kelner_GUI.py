@@ -7,7 +7,9 @@
 # COPYRIGHT @ AGATA BUSZCZAK 2017
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+import linecache
+import random
+import codecs
 
 class Ui_Form(object):
     def __init__(self):
@@ -17,10 +19,73 @@ class Ui_Form(object):
         self.stat = 'talk'
 
         self.clientDialog = ''
-        self.waiterDialog = 'Dzień dobry!'
+        self.waiterDialog = ''
 
         self.foodText = ''
         self.drinksText = ''
+
+        ### zmienne rozmowy
+        self.liczbajedz = 0
+        self.liczbapic = 0
+        self.picie = False
+        self.jedzenie = False
+
+        self.propozycja = False
+        self.kontuuj = False
+        self.odpowiedzi = ''
+
+        self.powitanie = True #potrzebne na początku dialogu
+        self.error = False
+
+        self.slownikpropozycji = {"tak":"tak","poprosze":"tak","poproszę":"tak","poprosimy":"tak","dobrze":"tak","spróbuję":"tak","sprobuje":"tak","spróbuje":"tak","okej":"tak",
+"dobra":"tak","ok":"tak"}
+
+        self.slownik = {"żurek": "zurek", "żurku": "zurek", "żurkiem": "zurek", "zurek": "zurek", "zurku": "zurek",
+               "zurkiem": "zurek",
+               "rosół": "rosol", "rosołem": "rosol", "rosol": "rosol", "rosolem": "rosol",
+               "krupnik": "krupnik", "krupnika": "krupnik", "krupnikiem": "krupnik", "krupniku": "krupnik",
+               "bigos": "bigos", "bigosu": "bigos", "bigosem": "bigos", "bigosie": "bigos",
+               "placek": "placek", "placka": "placek", "plackiem": "placek", "placku": "placek",
+               "schabowy": "schabowy", "schabowego": "schabowy", "schabowym": "schabowy", "schab":"schabowy",
+               "schaba":"schabowy",
+               "filet": "filet", "filetu": "filet", "filetem": "filet", "filecie": "filet",
+               "spaghetti": "spaghetti",
+               "surówki": "surowki", "surówek": "surowki", "surówkom": "surowki", "surówkami": "surowki",
+               "surówkach": "surowki", "surówkę": "surowki", "surówką": "surowki",
+               "surowki": "surowki", "surowek": "surowki", "surowkom": "surowki", "surowkami": "surowki",
+               "surowkach": "surowki", "surówke": "surowki", "surowka": "surowki",
+               "ziemniaki": "ziemniaki", "ziemniaków": "ziemniaki", "ziemniakom": "ziemniaki",
+               "ziemniakami": "ziemniaki", "ziemniakach": "ziemniaki", "ziemniakow": "ziemniaki",
+               "kasza": "kasza", "kaszy": "kasza", "kaszę": "kasza", "kaszą": "kasza", "kasze": "kasza",
+               "ryż": "ryz", "ryżu": "ryz", "ryżowi": "ryz", "ryżem": "ryz", "ryz": "ryz", "ryzu": "ryz",
+               "ryzowi": "ryz", "ryzem": "ryz",
+               "warzywa": "warzywa", "warzyw": "warzywa", "warzywom": "warzywa", "warzywami": "warzywa",
+               "warzywach": "warzywa",
+               "dorsz": "dorsz", "dorsza": "dorsz", "dorszowi": "dorsz", "dorszem": "dorsz", "dorszu": "dorsz",
+               "frytki": "frytki", "frytek": "frytki", "frytkom": "frytki", "frytkami": "frytki", "frytkach": "frytki",
+               "cola": "cola", "coli": "cola", "cole": "cola", "colę": "cola", "colą": "cola",
+               "pepsi": "pepsi",
+               "fanta": "fanta", "fanty": "fanta", "fante": "fanta", "fantę": "fanta", "fantą": "fanta",
+               "herbata": "herbata", "herbaty": "herbata", "herbatę": "herbata", "herbate": "herbata",
+               "herbatą": "herbata",
+               "gazowana": "gaz", "gazowaną": "gaz", "gazowanej": "gaz",
+               "niegazowana": "niegaz", "niegazowanej": "niegaz", "niegazowaną": "niegaz",
+               "lemoniada": "lemoniada", "lemoniady": "lemoniada", "lemoniadzie": "lemoniada", "lemoniadę": "lemoniada",
+               "lemoniadą": "lemoniada", "lemoniade": "lemoniada",
+               "proponować": "propozycja", "proponuje": "propozycja", "zaproponuje": "propozycja","zaproponować": "propozycja","propozycji": "propozycja",
+               "proponowac": "propozycja","zaproponowac": "propozycja","zaproponujesz":"propozycja","propozycja":"propozycja","zaproponował":"propozycja",
+               "proponuj":"propozycja", "poleciłby": "propozycja", "polecenia": "propozycja","poleć": "propozycja", "polecacie":"propozycja",
+               "polecić":"propozycja", "proponujecie":"propozycja", "polecasz":"propozycja", "propozycję":"propozycja",
+               "jedzenie": "jedzenie", "jedzenia": "jedzenie", "jedzeniu": "jedzenie", "jedzeniem": "jedzenie",
+               "danie": "danie", "dania": "danie", "dań": "danie", "dan": "danie",
+               "picia": "picie", "picie": "picie", "piciu": "picie", "piciem": "picie",
+               "napój": "napoj", "napoj": "napoj", "napoju": "napoj", "napojem": "napoj"
+        }
+
+        self.slownikjedzenie = ['zurek', 'rosol', 'krupnik', 'bigos', 'placek', 'schabowy', 'filet', 'spaghetti', 'surowki', 'ziemniaki',
+'kasza', 'ryz', 'warzywa', 'dorsz', 'frytki']
+
+        self.slowniknapoje = ['cola', 'pepsi', 'fanta', 'herbata', 'gaz', 'niegaz', 'lemoniada']
 
 
     def setupUi(self, Form):
@@ -178,34 +243,28 @@ class Ui_Form(object):
         gender = msg.textValue()
         if gender == 'kobieta':
             self.gender = 'female'
+            odp = codecs.open('FEMALE.txt', 'r', 'utf-8')
+            self.odpowiedzi = odp.read()
+            self.odpowiedzi = self.odpowiedzi.split('\n')
+            self.waiterDialog = self.odpowiedzi[0]
         else:
             self.gender = 'male'
+            odp = codecs.open('MALE.txt', 'r', 'utf-8')
+            self.odpowiedzi = odp.read()
+            self.odpowiedzi = self.odpowiedzi.split('\n')
+            self.waiterDialog = self.odpowiedzi[0]
 
-
-
+        with open("MENUJEDZENIE.txt","r") as jedz:
+            self.liczbajedz = sum(1 for line in jedz)
+        with open("MENUPICIE.txt","r") as jedz:
+            self.liczbapic = sum(1 for line in jedz)
 
         self.retranslateUi(Form)
+
         QtCore.QMetaObject.connectSlotsByName(Form)
 
 ########### STATS FUNCTIONS ################################################################################################
 
-    #dodać więcej statusów? jakoś zrobić oczekiwanie na posiłek czy coś? jakieś propozycje???
-    def change_stat(self):
-        if self.stat == 'talk':
-            self.stat = 'eating'
-            self.textCurrentAction.setHtml("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">posiłek</span></p></body></html>")
-
-        else:
-            self.stat = 'talk'
-            self.textCurrentAction.setHtml("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">rozmowa z kelnerem</span></p></body></html>")
 
     def setAmount(self, amount):
         self.amount = amount
@@ -236,18 +295,44 @@ class Ui_Form(object):
 
     def endInteraction(self):
         self.stat = 'END'
+        with open("ZAMOWIENIE.txt","w") as zam:
+            zam.seek(0)
+            zam.truncate()
         self.textCurrentAction.setHtml("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">INTERAKCJA ZAKOŃCZONA: WYJDŹ Z RESTAURACJI</span></p></body></html>")
-
+        self.waiterDialog = self.odpowiedzi[9]
+        self.waiterSays()
 
 
 ####### BOXES UPDATES ####################################### update of status box is in status change lol whateva, you can move updateAmpunt somewhere too depends how much you'll expand it
 
-    def updateAmount(self, add):
-        self.amount += add #jak w funkcji liczenia aktualnej sumy jest coś jeszcze to dopisz do tej funkcji, a jak chcesz mieć własną funkcje która liczy to usuń ta linijke i argument add tej funkcji
+
+    def display_stat(self):
+        if self.stat == 'eating':
+            self.textCurrentAction.setHtml("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">posiłek</span></p></body></html>")
+
+        if self.stat == 'talk':
+            self.textCurrentAction.setHtml("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">rozmowa z kelnerem</span></p></body></html>")
+
+        if self.stat == 'wait':
+            self.textCurrentAction.setHtml("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">oczekiwanie na posiłek</span></p></body></html>")
+
+    def updateAmount(self):
         self.textAmount.setHtml("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 #"p, li { white-space: pre-wrap; }\n"
@@ -285,23 +370,220 @@ class Ui_Form(object):
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt;\"><br /></p></body></html>".format(temp=self.drnksText))
 
 
-    #def talk(self):
-        ### ROZMMOWA ###
-        ### to co właśnie powiedział klient jest wprowadzane do zmiennej self.clientDialog (za każdym razem jest tam tylko to co powiedział ostatnio)
-        ##gdy kelner coś powie:
-        # ustawić self.waiterDialog = to_co_mówi - żeby było w stringu to co mówi/ma sie wyswietlać i wywołać self.waiterSays()
-        ### gdy kelner odchodzi trzeba wywołać funkcje change_stat()
-        ### gdy kelner przynosi posiłek trzeba wywołać updateFood() / udpadeDrinks()
+########## ROZMOWA ##########################
 
-################################################################################
+    def podajJedzenie(self):
+        self.waiterDialog = self.odpowiedzi[13]
+        self.waiterSays()
+        self.stat = 'eating'
+        self.display_stat()
+
+    def RandomN(self, only):
+        """Podaje losową pozycje z menu napojów"""
+        liczba = random.randint(1, self.liczbapic)
+        wiersz = linecache.getline('MENUPICIE.txt', liczba)
+        parts = wiersz.split(",")
+        propnap = self.odpowiedzi[1].format(liczba, parts[1])
+        self.waiterDialog = propnap
+        if only:
+            self.waiterSays()
+        return liczba
+
+    def RandomP(self, only):
+        """Podaje losową pozycje z menu posiłków i napojów"""
+        liczba = random.randint(1, self.liczbajedz)
+        wiersz = linecache.getline('MENUJEDZENIE.txt', liczba)
+        parts = wiersz.split(",")
+        propjedz = self.odpowiedzi[2].format(liczba, parts[1])
+        if only:
+            self.waiterDialog += propjedz
+        self.waiterSays()
+        return liczba
+
+
+    def SprawdzPropozycja(self):
+        """Sprawdza czy klient potwierdził propozycję."""
+        x = self.clientDialog                  # wpisz zdanie
+        self.kontuuj = False # ustawia zmienną z powrotem na False
+        zapisz = x.split()             #pod zmienną 'zapisz' podstawiamy liste slow oddzielonych przecinkiem
+        zamowienie = []              # tworzymy tablice 'zmowienie'
+        for x in zapisz:             #dodajemy slowa do tablicy 'zamowienie'
+            zamowienie.append(x)
+        slownik = self.slownikpropozycji
+        hasla = []                                  #definiujemy tablice w ktorej znajdowac sie beda slowa kluczowe
+        slowo = list(slownik.keys())                  #tworzymy liste w ktorej znajduja sie klucze ze slownika
+
+        for element in zamowienie:
+            element = element.lower()                 #zamień wszystkie litery na małe
+            if element in slowo:                    # sprawdzamy kazde slowo z zamowienia, jesli znajduje sie ono w slowniku jako klucz to dodajemy je do tablicy z haslami
+                    hasla.append(slownik[element])
+        wynik = False
+        if "tak" in hasla:
+            wynik = True
+        else:
+            self.propozycja = False
+        return wynik
+
+    def wypowiedzKelnera(self):
+        with open("ZAMOWIENIE.txt", "w") as zam: # co to robi ??????????
+            zam.seek(0)
+            zam.truncate()
+
+        with open("MENUPICIE.txt", "r") as zamowienie, open("napoj.txt", "r") as picie, open("ZAMOWIENIE.txt","a") as ostat:
+            picie = [line.rstrip('\n') for line in picie]
+            for line in zamowienie:
+                if any(pic in line for pic in picie):
+                    skos = line.split(",")
+                    ostat.write(skos[1]+"\n")
+                    self.amount += float(skos[2])
+                    self.updateAmount()
+
+        with open("MENUJEDZENIE.txt", "r") as zamowienie, open("jedzenie.txt", "r") as jedzenie, open("ZAMOWIENIE.txt","a") as ostat:
+            jedzenie = [line.rstrip('\n') for line in jedzenie]
+            for line in zamowienie:
+                if any(pic in line for pic in jedzenie):
+                    skos = line.split(",")
+                    ostat.write(skos[1]+"\n")
+                    self.amount += float(skos[2])
+                    self.updateAmount()
+
+
+        ### Propozycja()
+        if self.propozycja == True:
+            prop = codecs.open('propozycje.txt','r','utf-8')
+            propozycja = prop.read()
+            condition = False
+            n = 0
+            p = 0
+            while not condition:
+                if 'napoj' in propozycja:
+                    if 'jedzenie' in propozycja:
+                        stat = False
+                    else:
+                        stat = True
+                    n = self.RandomN(stat)
+                if 'jedzenie' in propozycja:
+                    if 'napoj' in propozycja:
+                        stat = False
+                    else:
+                        stat = True
+                    p = self.RandomP(stat)
+                condition = self.SprawdzPropozycja()
+                if self.propozycja == True:
+                    self.kontuuj = True # sprawia że w funksji say klient wywołuje na nowo wypowiedź kelnera
+                    self.waiterDialog = self.odpowiedzi[11]
+                    self.waiterSays()
+
+
+            if n != 0:
+                wiersz = linecache.getline('MENUPICIE.txt', n)
+                parts = wiersz.split(",")
+                with codecs.open("ZAMOWIENIE.txt","a","utf-8") as zam:
+                    zam.write(parts[1] + "\n")
+                self.amount += float(parts[2])
+                self.updateAmount()
+
+            if p != 0:
+                wiersz = linecache.getline('MENUJEDZENIE.txt', p)
+                parts = wiersz.split(",")
+                with codecs.open("ZAMOWIENIE.txt", "a","utf-8") as zam:
+                    zam.write(parts[1] + "\n")
+                self.amount += float(parts[2])
+                self.updateAmount()
+
+        ### Upewnij()
+        s = ", "
+        czylizam = self.odpowiedzi[5]
+        zam = codecs.open("ZAMOWIENIE.txt", "r", "utf-8")
+        zam = zam.read()
+        zam = zam.split("\n")
+        zam.pop()
+        zam = s.join(zam)
+        czylizam = czylizam + " " + zam + "."
+        self.waiterDialog = czylizam
+        self.waiterDialog += ' ' + self.odpowiedzi[6]
+        self.waiterSays()
+        wynik = self.SprawdzPropozycja()
+        if wynik: # jak zwróci wynik true to kelner przynosi zamówienie i odchodzi - status zmienia się na jedzenie
+            self.waiterDialog = self.odpowiedzi[7]
+            self.waiterSays()
+            self.stat = 'wait'
+            self.display_stat()
+            self.podajJedzenie()
+
+        else: # kelner pyta się na nowo co w takim razie chce sie zamówić, przez co klient znowu musi cos powiedzieć
+            if self.propozycja == True:
+                self.kontuuj = True # sprawia że w funksji say klient wywołuje na nowo wypowiedź kelnera
+                self.waiterDialog = self.odpowiedzi[11]
+                self.waiterSays()
+
+
+    def wypowiedzKlienta(self):
+
+        x = self.clientDialog  # wpisz zdanie
+        zapisz = x.split()  # pod zmienną 'zapisz' podstawiamy liste slow oddzielonych przecinkiem
+        zamowienie = []  # tworzymy tablice 'zmowienie'
+        for x in zapisz:  # dodajemy slowa do tablicy 'zamowienie'
+            zamowienie.append(x)
+        slownik = self.slownik
+        hasla = []  # definiujemy tablice w ktorej znajdowac sie beda slowa kluczowe
+        slowo = list(slownik.keys())  # tworzymy liste w ktorej znajduja sie klucze ze slownika
+        for element in zamowienie:
+            element = element.lower()  # zamień wszystkie litery na małe
+            if element in slowo:  # sprawdzamy kazde slowo z zamowienia, jesli znajduje sie ono w slowniku jako klucz to dodajemy je do tablicy z haslami
+                hasla.append(slownik[element])
+        self.propozycja = False
+        p = open('propozycje.txt', 'w')
+
+        if "propozycja" in hasla:  # klient zażyczył sobie propozycji
+            self.propozycja = True
+            if "picie" in hasla or "napoj" in hasla:
+                p.write("napoj" + '\n')
+            elif "danie" in hasla or "jedzenie" in hasla:
+                p.write("jedzenie" + '\n')
+            else:
+                p.write("napoj" + '\n' + "jedzenie" + '\n')
+
+        self.picie = False
+        n = open('napoj.txt', 'w')
+        napoje = self.slowniknapoje
+        for haslo in hasla:
+            if haslo in napoje:
+                self.picie = True
+                n.write(haslo + '\n')
+        n.close()
+
+        self.jedzenie = False
+        j = open('jedzenie.txt', 'w')
+        danie = self.slownikjedzenie
+        for haslo in hasla:
+            if haslo in danie:
+                self.jedzenie = True
+                j.write(haslo + '\n')
+        j.close()
+
+        if self.error:
+            self.waiterDialog = self.odpowiedzi[12]
+            self.waiterSays()
+            self.error = False
+
+        self.wypowiedzKelnera()
 
 ########## BUTTONS FUNCTIONS ###############################################################################################
 
     def say(self):
-        if self.stat != 'END':
+        if self.stat != 'END' and self.stat != 'eating':
             self.clientDialog = self.clientLineEdit.text()
             self.clientSays()
             self.clientLineEdit.clear()
+            if self.powitanie:
+                self.waiterDialog = self.odpowiedzi[10]
+                self.waiterSays()
+                self.powitanie = False
+            else:
+                if not self.kontuuj: #nie wywołuje sie jeśli jesteśmy w trakcie proponowania
+                    self.wypowiedzKlienta()
+
 
     def eat(self):
         if self.stat != 'END':
@@ -325,17 +607,21 @@ class Ui_Form(object):
 
     def pay(self):
         if self.stat != 'END':
-            # if:
+            if self.stat == 'pay':
                 self.setAmount(0)
-            ## kelner mówi dziękuję za zapłate + pożegnanie?
+                self.updateAmount()
+                self.waiterDialog = self.odpowiedzi[9]
+                self.waiterSays()
                 self.endInteraction()
-            ## po zapłacie kończy się interakcja i jedyne co można w aplikacji zrobić to z niej wyjść :D
 
     def call(self):
         if self.stat != 'END':
             if self.stat == 'eating':
-                #kelner mówi coś w stylu co moge dla pani/pana zrobić (wraca do rozmowy)
-                self.change_stat()
+                self.stat = 'talk'
+                self.display_stat()
+                self.waiterDialog = self.odpowiedzi[8].format(self.amount)
+                self.waiterSays()
+                self.stat = 'pay'
 
     def menu(self):
         print('wip')
@@ -365,6 +651,7 @@ class Ui_Form(object):
 "<p align=\"right\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:16pt; font-weight:300;\">{temp} </span></p></body></html>".format(temp=self.waiterDialog)))
         self.sayButton.setText(_translate("Form", "Powiedz"))
         self.sayButton.clicked.connect(self.say)
+        self.clientLineEdit.returnPressed.connect(self.say)
         self.table.setText(_translate("Form", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; font-weight:600;\">..:: Stolik ::..</span></p></body></html>"))
         self.label_6.setText(_translate("Form", "<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">Twoje jedzenie:</span></p></body></html>"))
         self.label_5.setText(_translate("Form", "<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">Twoje napoje:</span></p></body></html>"))
@@ -390,7 +677,7 @@ class Ui_Form(object):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">rozmowa z kelnerem</span></p></body></html>"))
-        self.callButton.setText(_translate("Form", "Zawołaj kelnera"))
+        self.callButton.setText(_translate("Form", "Poproś o rachunek"))
         self.callButton.clicked.connect(self.call)
         self.label_2.setText(_translate("Form", "<html><head/><body><p><span style=\" font-size:10pt;\">Suma do zaplacenia:</span></p></body></html>"))
         self.textAmount.setHtml(_translate("Form", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
@@ -404,7 +691,6 @@ class Ui_Form(object):
         self.menuButton.clicked.connect(self.menu)
         self.exitButton.setText(_translate("Form", "Wyjdź z restauracji"))
         self.exitButton.clicked.connect(self.exit)
-
 
 if __name__ == "__main__":
     import sys
