@@ -275,10 +275,6 @@ class Ui_Form(object):
 
 ########### STATS FUNCTIONS ################################################################################################
 
-
-    def setAmount(self, amount):
-        self.amount = amount
-
     def setGender(self, gender):
         self.gender = gender
 
@@ -287,9 +283,6 @@ class Ui_Form(object):
 
     def getStat(self):
         return self.stat
-
-    def getAmount(self):
-        return self.amount
 
     def setClientDialog(self, text):
         self.clientDialog = text
@@ -347,7 +340,7 @@ class Ui_Form(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 #"p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">{} zł</span></p></body></html>".format(self.amount))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">{temp:.2f} zł</span></p></body></html>".format(temp=self.amount))
 
     def waiterSays(self):
         self.textWaiter.setHtml("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
@@ -707,7 +700,7 @@ class Ui_Form(object):
     def pay(self):
         if self.stat != 'END':
             if self.stat == 'pay':
-                self.setAmount(0)
+                self.amount = 0
                 self.updateAmount()
                 self.waiterDialog = self.odpowiedzi[9]
                 self.waiterSays()
