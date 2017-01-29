@@ -12,3 +12,5 @@ Co chciałby Pan zamówić?
 W takim razie co chciałby Pan zamówić?
 Czy mógłby Pan wyrazić się inaczej?
 Proszę bardzo, oto Pana zamówienie. Smacznego!
+Czy chciałby Pan zamówić coś jeszcze?
+W takim razie, co jeszcze chciałby Pan zamówić?
