@@ -1,4 +1,4 @@
-Witamy Panią.
+Witam Panią w restauracji Quiznak.
 Do picia proponuję pozycję numer {0} - {1}.
 Do jedzenia proponuję pozycję numer {0} - {1}.
 Zamówiła Pani napój nr {0} - {1}.
@@ -9,3 +9,6 @@ Dobrze. Za chwilę przyniosę zamówienie.
 Należy się {0:.2f}.
 Dziękujemy za skorzystanie z naszych usług! Polecamy się na przyszłość.
 Co chciałaby Pani zamówić?
+W takim razie, co chciałaby Pani zamówić?
+Czy mogłaby Pani wyrazić się inaczej?
+Proszę bardzo, oto Pani zamówienie. Smacznego!
