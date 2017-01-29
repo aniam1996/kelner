@@ -85,7 +85,7 @@ class Ui_Form(object):
                "proponować": "propozycja", "proponuje": "propozycja", "zaproponuje": "propozycja","zaproponować": "propozycja","propozycji": "propozycja",
                "proponowac": "propozycja","zaproponowac": "propozycja","zaproponujesz":"propozycja","propozycja":"propozycja","zaproponował":"propozycja",
                "proponuj":"propozycja", "poleciłby": "propozycja", "polecenia": "propozycja","poleć": "propozycja", "polecacie":"propozycja",
-               "polecić":"propozycja", "proponujecie":"propozycja", "polecasz":"propozycja", "propozycję":"propozycja",
+               "polecić":"propozycja", "proponujecie":"propozycja", "polecasz":"propozycja", "propozycję":"propozycja", "poleca":"propozycja","zaproponowali":"propozycja",
                "jedzenie": "jedzenie", "jedzenia": "jedzenie", "jedzeniu": "jedzenie", "jedzeniem": "jedzenie",
                "danie": "danie", "dania": "danie", "dań": "danie", "dan": "danie",
                "picia": "picie", "picie": "picie", "piciu": "picie", "piciem": "picie",
@@ -454,6 +454,7 @@ class Ui_Form(object):
                 self.odpowiedz = False
                 self.kontynuuj = False
                 self.amount = 0 #jak zamówienie sie nie zgadza to kasuje należność i zaczyna dialog na nowo lol yolo
+                self.updateAmount()
 
     def Upewnij(self):
          if not self.upewnienie:
@@ -484,11 +485,14 @@ class Ui_Form(object):
                     self.waiterSays()
                     self.wiecej = True
                  else: #kelner przynosi zamówienie i odchodzi - status zmienia się na jedzenie - jesli juz nie chcemy nic wiecej
+                     print('not self.wiecej')
                      self.waiterDialog = self.odpowiedzi[13]
                      print(self.waiterDialog)
                      self.waiterSays()
                      self.stat = 'eating'
                      self.display_stat()
+                     self.updateFood()
+                     self.updateDrinks()
                      #czyszczenie flag:
                      self.upewnienie = False
                      self.propozycja = False
@@ -514,6 +518,8 @@ class Ui_Form(object):
                     zam.seek(0)
                     zam.truncate()
                  self.amount = 0
+                 self.foodText = ''
+                 self.drinksText = ''
                  self.waiterDialog = self.odpowiedzi[11]
                  self.waiterSays()
 
@@ -591,26 +597,29 @@ class Ui_Form(object):
         else:
             print('konkret')
             self.picie = False
-            n = open('napoj.txt', 'w')
+            n = open('napoj.txt', 'a')
             napoje = self.slowniknapoje
             for haslo in hasla:
                 if haslo in napoje:
                     self.picie = True
                     n.write(haslo + '\n')
+                    self.drinksText += haslo + ', '
             n.close()
 
             self.jedzenie = False
-            j = open('jedzenie.txt', 'w')
+            j = open('jedzenie.txt', 'a')
             danie = self.slownikjedzenie
             for haslo in hasla:
                 if haslo in danie:
                     self.jedzenie = True
                     j.write(haslo + '\n')
+                    self.foodText += haslo + ', '
             j.close()
 
-            with open("ZAMOWIENIE.txt", "w") as zam:
-                zam.seek(0)
-                zam.truncate()
+            if not self.wiecej:
+                with open("ZAMOWIENIE.txt", "w") as zam:
+                    zam.seek(0)
+                    zam.truncate()
 
             with open("MENUPICIE.txt", "r") as zamowienie, open("napoj.txt", "r") as picie, open("ZAMOWIENIE.txt","a") as ostat:
                 picie = [line.rstrip('\n') for line in picie]
