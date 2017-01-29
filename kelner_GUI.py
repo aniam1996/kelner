@@ -264,6 +264,16 @@ class Ui_Form(object):
         with open("MENUPICIE.txt","r") as jedz:
             self.liczbapic = sum(1 for line in jedz)
 
+        with open("ZAMOWIENIE.txt","w") as zam:
+            zam.seek(0)
+            zam.truncate()
+        with open("jedzenie.txt","w") as zam:
+            zam.seek(0)
+            zam.truncate()
+        with open("napoj.txt","w") as zam:
+            zam.seek(0)
+            zam.truncate()
+
         self.retranslateUi(Form)
 
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -385,7 +395,7 @@ class Ui_Form(object):
         parts = wiersz.split(",")
         propjedz = self.odpowiedzi[2].format(liczba, parts[1])
         if not only:
-            self.waiterDialog += propjedz
+            self.waiterDialog += ' ' + propjedz
         else:
             self.waiterDialog = propjedz
         self.waiterSays()
@@ -414,6 +424,7 @@ class Ui_Form(object):
         if "tak" in hasla:
             print('odp')
             if self.wiecej: #kelner zaputa się co jeszcze podać - nie usuwając już zamówionych produktów zacznie rozmowe na nowo
+                self.amount = 0
                 print('wiecej w odp tak')
                 self.odpowiedz = True
                 self.wiecej = False
@@ -537,15 +548,17 @@ class Ui_Form(object):
             if self.n != 0:
                 wiersz = linecache.getline('MENUPICIE.txt', self.n)
                 parts = wiersz.split(",")
-                with codecs.open("ZAMOWIENIE.txt","a","utf-8") as zam:
+                with codecs.open("ZAMOWIENIE.txt","a","utf-8") as zam, codecs.open("napoj.txt","a","utf-8") as pic:
                     zam.write(parts[1] + "\n")
+                    pic.write(parts[3])
                 self.amount += float(parts[2])
 
             if self.j != 0:
                 wiersz = linecache.getline('MENUJEDZENIE.txt', self.j)
                 parts = wiersz.split(",")
-                with codecs.open("ZAMOWIENIE.txt", "a","utf-8") as zam:
+                with codecs.open("ZAMOWIENIE.txt", "a","utf-8") as zam, codecs.open("jedzenie.txt","a","utf-8") as jedz:
                     zam.write(parts[1] + "\n")
+                    jedz.write(parts[3])
                 self.amount += float(parts[2])
             self.Upewnij()
 
