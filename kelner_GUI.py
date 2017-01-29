@@ -357,20 +357,22 @@ class Ui_Form(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:16pt; font-style:italic; color:#707070;\">{temp}</span></p></body></html>".format(temp=self.clientDialog))
 
     def updateFood(self):
+        temp = self.foodText
         self.textFood.setHtml("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 #"p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">{temp}</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"></span></p></body></html>".format(temp=self.foodText))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">{}</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"></span></p></body></html>".format(temp))
 
     def updateDrinks(self):
+        temp = self.drinksText
         self.textDrinks.setHtml("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 #"p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">{temp}</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt;\"><br /></p></body></html>".format(temp=self.drnksText))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">{}</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt;\"><br /></p></body></html>".format(temp))
 
 
 ########## ROZMOWA ##########################
@@ -466,6 +468,8 @@ class Ui_Form(object):
                  self.waiterSays()
                  self.upewnienie = True
                  self.kontynuuj = True
+                 self.pjedzenie = False
+                 self.pnapoj = False
              else:
                  self.wypowiedzKelneraProponowanie()
 
@@ -484,8 +488,8 @@ class Ui_Form(object):
                      self.waiterSays()
                      self.stat = 'eating'
                      self.display_stat()
-                     #self.updateFood()
-                     #self.updateDrinks()
+                     self.updateFood()
+                     self.updateDrinks()
                      #czyszczenie flag:
                      self.upewnienie = False
                      self.propozycja = False
@@ -538,7 +542,8 @@ class Ui_Form(object):
                     stat = True
                     print(stat)
                 self.RandomN(stat)
-                self.RandomJ(stat)
+                if not stat:
+                    self.RandomJ(stat)
             else:
                 if self.pjedzenie:
                     self.RandomJ(True)
@@ -578,6 +583,7 @@ class Ui_Form(object):
                 hasla.append(slownik[element])
 
         self.propozycja = False
+
         if "propozycja" in hasla:  # klient zażyczył sobie propozycji
             self.propozycja = True
             print(self.propozycja)
@@ -593,27 +599,28 @@ class Ui_Form(object):
                 self.pjedzenie = True
             self.wypowiedzKelneraProponowanie()
 
+
         else:
             print('konkret')
             self.picie = False
-            n = open('napoj.txt', 'a')
             napoje = self.slowniknapoje
             for haslo in hasla:
                 if haslo in napoje:
+                    n = open('napoj.txt', 'a')
                     self.picie = True
                     n.write(haslo + '\n')
                     self.drinksText += haslo + ' '
-            n.close()
+                    n.close()
 
             self.jedzenie = False
-            j = open('jedzenie.txt', 'a')
             danie = self.slownikjedzenie
             for haslo in hasla:
                 if haslo in danie:
+                    j = open('jedzenie.txt', 'a')
                     self.jedzenie = True
                     j.write(haslo + '\n')
                     self.foodText += haslo + ' '
-            j.close()
+                    j.close()
 
             if not self.wiecej:
                 with open("ZAMOWIENIE.txt", "w") as zam:
