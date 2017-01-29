@@ -27,15 +27,24 @@ class Ui_Form(object):
         ### zmienne rozmowy
         self.liczbajedz = 0
         self.liczbapic = 0
+        self.odpowiedzi = ''
+
+        ### flagi
+
         self.picie = False
         self.jedzenie = False
 
+        self.pnapoj = False
+        self.pjedzenie = False
+
         self.propozycja = False
-        self.kontuuj = False
-        self.odpowiedzi = ''
+        self.kontynuuj = False
+        self.upewnienie = False
+        self.odpowiedz = False
+        self.n = 0
+        self.j = 0
 
         self.powitanie = True #potrzebne na początku dialogu
-        self.error = False
 
         self.slownikpropozycji = {"tak":"tak","poprosze":"tak","poproszę":"tak","poprosimy":"tak","dobrze":"tak","spróbuję":"tak","sprobuje":"tak","spróbuje":"tak","okej":"tak",
 "dobra":"tak","ok":"tak"}
@@ -372,14 +381,9 @@ class Ui_Form(object):
 
 ########## ROZMOWA ##########################
 
-    def podajJedzenie(self):
-        self.waiterDialog = self.odpowiedzi[13]
-        self.waiterSays()
-        self.stat = 'eating'
-        self.display_stat()
-
     def RandomN(self, only):
-        """Podaje losową pozycje z menu napojów"""
+        print('random n')
+        # Podaje losową pozycje z menu napojów"""
         liczba = random.randint(1, self.liczbapic)
         wiersz = linecache.getline('MENUPICIE.txt', liczba)
         parts = wiersz.split(",")
@@ -387,24 +391,31 @@ class Ui_Form(object):
         self.waiterDialog = propnap
         if only:
             self.waiterSays()
-        return liczba
+            self.kontynuuj = True
+        self.n = liczba
+        print(self.n)
 
-    def RandomP(self, only):
-        """Podaje losową pozycje z menu posiłków i napojów"""
+    def RandomJ(self, only):
+        print('random p')
+        #"""Podaje losową pozycje z menu posiłków i napojów"""
         liczba = random.randint(1, self.liczbajedz)
         wiersz = linecache.getline('MENUJEDZENIE.txt', liczba)
         parts = wiersz.split(",")
         propjedz = self.odpowiedzi[2].format(liczba, parts[1])
-        if only:
+        if not only:
             self.waiterDialog += propjedz
+        else:
+            self.waiterDialog = propjedz
         self.waiterSays()
-        return liczba
+        self.kontynuuj = True
+        self.j = liczba
+        print(self.j)
 
 
-    def SprawdzPropozycja(self):
+    def SprawdzOdp(self):
         """Sprawdza czy klient potwierdził propozycję."""
+        print('sprawdzanie odpowiedzi')
         x = self.clientDialog                  # wpisz zdanie
-        self.kontuuj = False # ustawia zmienną z powrotem na False
         zapisz = x.split()             #pod zmienną 'zapisz' podstawiamy liste slow oddzielonych przecinkiem
         zamowienie = []              # tworzymy tablice 'zmowienie'
         for x in zapisz:             #dodajemy slowa do tablicy 'zamowienie'
@@ -417,105 +428,100 @@ class Ui_Form(object):
             element = element.lower()                 #zamień wszystkie litery na małe
             if element in slowo:                    # sprawdzamy kazde slowo z zamowienia, jesli znajduje sie ono w slowniku jako klucz to dodajemy je do tablicy z haslami
                     hasla.append(slownik[element])
-        wynik = False
+
         if "tak" in hasla:
-            wynik = True
+            self.odpowiedz = True
+            self.kontynuuj = True
+            self.updateAmount()
         else:
-            self.propozycja = False
-        return wynik
+            self.odpowiedz = False
+            self.kontynuuj = False
+            self.amount = 0 #jak zamówienie sie nie zgadza to kasuje należność i zaczyna dialog na nowo lol yolo
 
-    def wypowiedzKelnera(self):
-        with open("ZAMOWIENIE.txt", "w") as zam: # co to robi ??????????
-            zam.seek(0)
-            zam.truncate()
+    def Upewnij(self):
+         if not self.upewnienie:
+             if self.odpowiedz:
+                 print('funkcja Upewnij')
+                 s = ", "
+                 czylizam = self.odpowiedzi[5]
+                 zam = codecs.open("ZAMOWIENIE.txt", "r", "utf-8")
+                 zam = zam.read()
+                 zam = zam.split("\n")
+                 zam.pop()
+                 zam = s.join(zam)
+                 czylizam = czylizam + " " + zam + "."
+                 self.waiterDialog = czylizam
+                 self.waiterDialog += ' ' + self.odpowiedzi[6]
+                 self.waiterSays()
+                 self.upewnienie = True
+                 self.kontynuuj = True
+             else:
+                 self.wypowiedzKelneraProponowanie()
 
-        with open("MENUPICIE.txt", "r") as zamowienie, open("napoj.txt", "r") as picie, open("ZAMOWIENIE.txt","a") as ostat:
-            picie = [line.rstrip('\n') for line in picie]
-            for line in zamowienie:
-                if any(pic in line for pic in picie):
-                    skos = line.split(",")
-                    ostat.write(skos[1]+"\n")
-                    self.amount += float(skos[2])
-                    self.updateAmount()
+         else:
+             print('funkcja upewnij: kontynuacja')
+             if self.odpowiedz: # jak zwróci wynik true to kelner przynosi zamówienie i odchodzi - status zmienia się na jedzenie
+                 self.waiterDialog = self.odpowiedzi[13]
+                 print(self.waiterDialog)
+                 self.waiterSays()
+                 self.stat = 'eating'
+                 self.display_stat()
+                 #czyszczenie flag:
+                 self.upewnienie = False
+                 self.propozycja = False
+                 self.odpowiedz = False
+                 self.kontynuuj = False
 
-        with open("MENUJEDZENIE.txt", "r") as zamowienie, open("jedzenie.txt", "r") as jedzenie, open("ZAMOWIENIE.txt","a") as ostat:
-            jedzenie = [line.rstrip('\n') for line in jedzenie]
-            for line in zamowienie:
-                if any(pic in line for pic in jedzenie):
-                    skos = line.split(",")
-                    ostat.write(skos[1]+"\n")
-                    self.amount += float(skos[2])
-                    self.updateAmount()
+             else: # kelner pyta się na nowo co w takim razie chce sie zamówić, przez co klient znowu musi cos powiedzieć (tak jakby rozpoczyna rozmowe na nowo, a nie od razu proponuje coś innego)
+                 #czyszczenie flag
+                 self.upewnienie = False
+                 self.propozycja = False
+                 self.kontynuuj = False
+                 self.odpowiedz = False
+                 with open("ZAMOWIENIE.txt","w") as zam:
+                    zam.seek(0)
+                    zam.truncate()
+                 self.amount = 0
+                 self.waiterDialog = self.odpowiedzi[11]
+                 self.waiterSays()
 
+    def wypowiedzKelneraProponowanie(self):
 
-        ### Propozycja()
-        if self.propozycja == True:
-            prop = codecs.open('propozycje.txt','r','utf-8')
-            propozycja = prop.read()
-            condition = False
-            n = 0
-            p = 0
-            while not condition:
-                if 'napoj' in propozycja:
-                    if 'jedzenie' in propozycja:
-                        stat = False
-                    else:
-                        stat = True
-                    n = self.RandomN(stat)
-                if 'jedzenie' in propozycja:
-                    if 'napoj' in propozycja:
-                        stat = False
-                    else:
-                        stat = True
-                    p = self.RandomP(stat)
-                condition = self.SprawdzPropozycja()
-                if self.propozycja == True:
-                    self.kontuuj = True # sprawia że w funksji say klient wywołuje na nowo wypowiedź kelnera
-                    self.waiterDialog = self.odpowiedzi[11]
-                    self.waiterSays()
+        if not self.kontynuuj:
+            print('proponowanie: started')
+            self.n = 0
+            self.j = 0
 
+            if self.pnapoj:
+                print('if dziala')
+                if self.pjedzenie:
+                    stat = False
+                    print('jedzenie: ', stat)
+                else:
+                    stat = True
+                    print(stat)
+                self.RandomN(stat)
+                self.RandomJ(stat)
+            else:
+                if self.pjedzenie:
+                    self.RandomJ(True)
 
-            if n != 0:
-                wiersz = linecache.getline('MENUPICIE.txt', n)
+        else:
+
+            if self.n != 0:
+                wiersz = linecache.getline('MENUPICIE.txt', self.n)
                 parts = wiersz.split(",")
                 with codecs.open("ZAMOWIENIE.txt","a","utf-8") as zam:
                     zam.write(parts[1] + "\n")
                 self.amount += float(parts[2])
-                self.updateAmount()
 
-            if p != 0:
-                wiersz = linecache.getline('MENUJEDZENIE.txt', p)
+            if self.j != 0:
+                wiersz = linecache.getline('MENUJEDZENIE.txt', self.j)
                 parts = wiersz.split(",")
                 with codecs.open("ZAMOWIENIE.txt", "a","utf-8") as zam:
                     zam.write(parts[1] + "\n")
                 self.amount += float(parts[2])
-                self.updateAmount()
-
-        ### Upewnij()
-        s = ", "
-        czylizam = self.odpowiedzi[5]
-        zam = codecs.open("ZAMOWIENIE.txt", "r", "utf-8")
-        zam = zam.read()
-        zam = zam.split("\n")
-        zam.pop()
-        zam = s.join(zam)
-        czylizam = czylizam + " " + zam + "."
-        self.waiterDialog = czylizam
-        self.waiterDialog += ' ' + self.odpowiedzi[6]
-        self.waiterSays()
-        wynik = self.SprawdzPropozycja()
-        if wynik: # jak zwróci wynik true to kelner przynosi zamówienie i odchodzi - status zmienia się na jedzenie
-            self.waiterDialog = self.odpowiedzi[7]
-            self.waiterSays()
-            self.stat = 'wait'
-            self.display_stat()
-            self.podajJedzenie()
-
-        else: # kelner pyta się na nowo co w takim razie chce sie zamówić, przez co klient znowu musi cos powiedzieć
-            if self.propozycja == True:
-                self.kontuuj = True # sprawia że w funksji say klient wywołuje na nowo wypowiedź kelnera
-                self.waiterDialog = self.odpowiedzi[11]
-                self.waiterSays()
+            self.Upewnij()
 
 
     def wypowiedzKlienta(self):
@@ -532,42 +538,68 @@ class Ui_Form(object):
             element = element.lower()  # zamień wszystkie litery na małe
             if element in slowo:  # sprawdzamy kazde slowo z zamowienia, jesli znajduje sie ono w slowniku jako klucz to dodajemy je do tablicy z haslami
                 hasla.append(slownik[element])
-        self.propozycja = False
-        p = open('propozycje.txt', 'w')
 
+        self.propozycja = False
         if "propozycja" in hasla:  # klient zażyczył sobie propozycji
             self.propozycja = True
+            print(self.propozycja)
             if "picie" in hasla or "napoj" in hasla:
-                p.write("napoj" + '\n')
+                print('picie')
+                self.pnapoj = True
             elif "danie" in hasla or "jedzenie" in hasla:
-                p.write("jedzenie" + '\n')
+                print('jedzenie')
+                self.pjedzenie = True
             else:
-                p.write("napoj" + '\n' + "jedzenie" + '\n')
+                print('picie i jedzenie')
+                self.pnapoj = True
+                self.pjedzenie = True
+            self.wypowiedzKelneraProponowanie()
 
-        self.picie = False
-        n = open('napoj.txt', 'w')
-        napoje = self.slowniknapoje
-        for haslo in hasla:
-            if haslo in napoje:
-                self.picie = True
-                n.write(haslo + '\n')
-        n.close()
+        else:
+            self.picie = False
+            n = open('napoj.txt', 'w')
+            napoje = self.slowniknapoje
+            for haslo in hasla:
+                if haslo in napoje:
+                    self.picie = True
+                    n.write(haslo + '\n')
+            n.close()
 
-        self.jedzenie = False
-        j = open('jedzenie.txt', 'w')
-        danie = self.slownikjedzenie
-        for haslo in hasla:
-            if haslo in danie:
-                self.jedzenie = True
-                j.write(haslo + '\n')
-        j.close()
+            self.jedzenie = False
+            j = open('jedzenie.txt', 'w')
+            danie = self.slownikjedzenie
+            for haslo in hasla:
+                if haslo in danie:
+                    self.jedzenie = True
+                    j.write(haslo + '\n')
+            j.close()
 
-        if self.error:
-            self.waiterDialog = self.odpowiedzi[12]
-            self.waiterSays()
-            self.error = False
+            with open("ZAMOWIENIE.txt", "w") as zam:
+                zam.seek(0)
+                zam.truncate()
 
-        self.wypowiedzKelnera()
+            with open("MENUPICIE.txt", "r") as zamowienie, open("napoj.txt", "r") as picie, open("ZAMOWIENIE.txt","a") as ostat:
+                picie = [line.rstrip('\n') for line in picie]
+                for line in zamowienie:
+                    if any(pic in line for pic in picie):
+                        skos = line.split(",")
+                        ostat.write(skos[1]+"\n")
+                        self.amount += float(skos[2])
+
+            with open("MENUJEDZENIE.txt", "r") as zamowienie, open("jedzenie.txt", "r") as jedzenie, open("ZAMOWIENIE.txt","a") as ostat:
+                jedzenie = [line.rstrip('\n') for line in jedzenie]
+                for line in zamowienie:
+                    if any(pic in line for pic in jedzenie):
+                        skos = line.split(",")
+                        ostat.write(skos[1]+"\n")
+                        self.amount += float(skos[2])
+
+            if not self.picie and not self.jedzenie: # klient nie odpowiedział na pytanie
+                self.waiterDialog = self.odpowiedzi[12]
+                self.waiterSays()
+            else:
+                self.Upewnij()
+
 
 ########## BUTTONS FUNCTIONS ###############################################################################################
 
@@ -576,13 +608,26 @@ class Ui_Form(object):
             self.clientDialog = self.clientLineEdit.text()
             self.clientSays()
             self.clientLineEdit.clear()
-            if self.powitanie:
+            if self.powitanie: # tylko na samym początku: klient może napisac cokolwiek (w założeniu się przywita) a nastepnie kelner pyta sie co podać
                 self.waiterDialog = self.odpowiedzi[10]
                 self.waiterSays()
                 self.powitanie = False
             else:
-                if not self.kontuuj: #nie wywołuje sie jeśli jesteśmy w trakcie proponowania
-                    self.wypowiedzKlienta()
+                if self.kontynuuj: #sprawdza czy jesteśmy w trakcie proponowania (wypowiedź jest odp twierdzącą/przeczącą)
+                    if self.upewnienie:
+                        self.SprawdzOdp()
+                        self.Upewnij()
+                    else:
+                        print('SPR CZY PRZYJMUJESZ PROPOZYCJE')
+                        if self.propozycja:
+                            self.SprawdzOdp()
+                            print(self.odpowiedz)
+                            print('self.n: ', self.n, ' self.j: ', self.j)
+                            self.wypowiedzKelneraProponowanie()
+                else:
+                    if not self.propozycja:
+                        self.wypowiedzKlienta()
+                        print('wyp klienta')
 
 
     def eat(self):
