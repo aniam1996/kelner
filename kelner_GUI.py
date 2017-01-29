@@ -22,7 +22,6 @@ class Ui_Form(object):
         self.waiterDialog = ''
 
         self.foodText = ''
-        self.drinksText = ''
 
         ### zmienne rozmowy
         self.liczbajedz = 0
@@ -174,10 +173,10 @@ class Ui_Form(object):
         self.textFood.setMinimumSize(QtCore.QSize(0, 100))
         self.textFood.setObjectName("textFood")
         self.horizontalLayout_11.addWidget(self.textFood)
-        self.textDrinks = QtWidgets.QTextBrowser(Form)
-        self.textDrinks.setMinimumSize(QtCore.QSize(0, 100))
-        self.textDrinks.setObjectName("textDrinks")
-        self.horizontalLayout_11.addWidget(self.textDrinks)
+        self.textMenu = QtWidgets.QTextBrowser(Form)
+        self.textMenu.setMinimumSize(QtCore.QSize(0, 100))
+        self.textMenu.setObjectName("textMenu")
+        self.horizontalLayout_11.addWidget(self.textMenu)
         self.verticalLayout_8.addLayout(self.horizontalLayout_11)
         self.horizontalLayout_12 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_12.setContentsMargins(20, 5, 20, 20)
@@ -187,10 +186,10 @@ class Ui_Form(object):
         self.eatButton.setMinimumSize(QtCore.QSize(0, 40))
         self.eatButton.setObjectName("eatButton")
         self.horizontalLayout_12.addWidget(self.eatButton)
-        self.drinkButton = QtWidgets.QPushButton(Form)
-        self.drinkButton.setMinimumSize(QtCore.QSize(0, 40))
-        self.drinkButton.setObjectName("drinkButton")
-        self.horizontalLayout_12.addWidget(self.drinkButton)
+        self.menuButton = QtWidgets.QPushButton(Form)
+        self.menuButton.setMinimumSize(QtCore.QSize(0, 40))
+        self.menuButton.setObjectName("menuButton")
+        self.horizontalLayout_12.addWidget(self.menuButton)
         self.verticalLayout_8.addLayout(self.horizontalLayout_12)
         self.verticalLayout_4.addLayout(self.verticalLayout_8)
         self.horizontalLayout.addLayout(self.verticalLayout_4)
@@ -230,10 +229,6 @@ class Ui_Form(object):
         self.verticalLayout_11.addWidget(self.payButton)
         spacerItem3 = QtWidgets.QSpacerItem(20, 500, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_11.addItem(spacerItem3)
-        self.menuButton = QtWidgets.QPushButton(Form)
-        self.menuButton.setMinimumSize(QtCore.QSize(0, 40))
-        self.menuButton.setObjectName("menuButton")
-        self.verticalLayout_11.addWidget(self.menuButton)
         self.exitButton = QtWidgets.QPushButton(Form)
         self.exitButton.setMinimumSize(QtCore.QSize(0, 40))
         self.exitButton.setObjectName("exitButton")
@@ -365,15 +360,6 @@ class Ui_Form(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">{}</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"></span></p></body></html>".format(temp))
 
-    def updateDrinks(self):
-        temp = self.drinksText
-        self.textDrinks.setHtml("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-#"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">{}</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt;\"><br /></p></body></html>".format(temp))
-
 
 ########## ROZMOWA ##########################
 
@@ -436,7 +422,6 @@ class Ui_Form(object):
                 #czyszczenie flag:
                 self.upewnienie = False
                 self.propozycja = False
-                self.odpowiedz = False
                 self.kontynuuj = False
             else:
                 self.odpowiedz = True
@@ -462,6 +447,7 @@ class Ui_Form(object):
                  zam = zam.split("\n")
                  zam.pop()
                  zam = s.join(zam)
+                 self.foodText = zam
                  czylizam = czylizam + " " + zam + "."
                  self.waiterDialog = czylizam
                  self.waiterDialog += ' ' + self.odpowiedzi[6]
@@ -489,7 +475,6 @@ class Ui_Form(object):
                      self.stat = 'eating'
                      self.display_stat()
                      self.updateFood()
-                     self.updateDrinks()
                      #czyszczenie flag:
                      self.upewnienie = False
                      self.propozycja = False
@@ -522,7 +507,6 @@ class Ui_Form(object):
                      zam.truncate()
                  self.amount = 0
                  self.foodText = ''
-                 self.drinksText = ''
                  self.waiterDialog = self.odpowiedzi[11]
                  self.waiterSays()
 
@@ -602,24 +586,20 @@ class Ui_Form(object):
 
         else:
             print('konkret')
-            self.picie = False
             napoje = self.slowniknapoje
             for haslo in hasla:
                 if haslo in napoje:
                     n = open('napoj.txt', 'a')
                     self.picie = True
                     n.write(haslo + '\n')
-                    self.drinksText += haslo + ' '
                     n.close()
 
-            self.jedzenie = False
             danie = self.slownikjedzenie
             for haslo in hasla:
                 if haslo in danie:
                     j = open('jedzenie.txt', 'a')
                     self.jedzenie = True
                     j.write(haslo + '\n')
-                    self.foodText += haslo + ' '
                     j.close()
 
             if not self.wiecej:
@@ -694,14 +674,17 @@ class Ui_Form(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"></span></p></body></html>")
 
 
-    def drink(self):
+    def menu(self):
         if self.stat != 'END':
-            self.textDrinks.setHtml("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+            self.textMenu.setHtml("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 #"p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"></span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt;\"><br /></p></body></html>")
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600;\">..:: JEDZENIE ::..</span></p>\n"
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Courier New\'; font-size:8pt; color:#000000; background-color:#ffffff;\">1. kotlet schabowy .... 11.50 zł</span><span style=\" font-family:\'Courier New\'; font-size:8pt; color:#000000;\"><br />2. bigos ............... 7.00 zł<br />3. zupa żurek .......... 5.00 zł<br />4. zupa rosół .......... 5.00 zł<br />5. zupa krupnik ........ 5.00 zł<br />6. placek po węgiersku . 5.50 zł<br />7. filet rybny ......... 9.00 zł<br />8. spaghetti bolognese . 9.00 zł<br />9. dorsz .............. 12.00 zł<br />10. kasza .............. 4.00 zł<br />11. ryż ................ 4.00 zł<br />12. gotowane warzywa ... 4.00 zł<br />13. ziemniaki .......... 4.00 zł<br />14. frytki ............. 4.00 zł<br />15. surówka ............ 4.00 zł</span></p>\n"
+"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Courier New\'; font-size:8pt; color:#000000;\"><br /></p>\n"
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Courier New\'; font-size:10pt; font-weight:600; color:#000000;\">..:: PICIE ::..</span></p>\n"
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Courier New\'; font-size:8pt; color:#000000; background-color:#ffffff;\">1. Cola ................ 5.00 zł</span><span style=\" font-family:\'Courier New\'; font-size:8pt; color:#000000;\"><br />2. Pepsi ............... 5.00 zł<br />3. Fanta ............... 5.00 zł<br />4. lemoniada ........... 4.50 zł<br />5. herbata ............. 4.00 zł<br />6. woda gazowana ....... 3.50 zł<br />7. woda niegazowana .... 3.50 zł<br /></span></p></body></html>")
 
 
     def pay(self):
@@ -721,10 +704,6 @@ class Ui_Form(object):
                 self.waiterDialog = self.odpowiedzi[8].format(self.amount)
                 self.waiterSays()
                 self.stat = 'pay'
-
-    def menu(self):
-        print('wip')
-        ### STILL GOTTA DO IT BUT THAT DOEASN'T CONNECT TO ANYTHING SO LATER
 
     def exit(self):
         if self.amount == 0:
@@ -753,23 +732,23 @@ class Ui_Form(object):
         self.clientLineEdit.returnPressed.connect(self.say)
         self.table.setText(_translate("Form", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; font-weight:600;\">..:: Stolik ::..</span></p></body></html>"))
         self.label_6.setText(_translate("Form", "<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">Twoje jedzenie:</span></p></body></html>"))
-        self.label_5.setText(_translate("Form", "<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">Twoje napoje:</span></p></body></html>"))
+        self.label_5.setText(_translate("Form", "<html><head/><body><p align=\"center\"><span style=\" font-size:10pt;\">..:: MENU ::.. </span></p></body></html>"))
         self.textFood.setHtml(_translate("Form", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"></span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"></span></p></body></html>"))
-        self.textDrinks.setHtml(_translate("Form", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.textMenu.setHtml(_translate("Form", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"></span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">* karta zamknieta *</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt;\"><br /></p></body></html>"))
         self.eatButton.setText(_translate("Form", "Zjedz"))
         self.eatButton.clicked.connect(self.eat)
-        self.drinkButton.setText(_translate("Form", "Wypij"))
-        self.drinkButton.clicked.connect(self.drink)
+        self.menuButton.setText(_translate("Form", "Wyświetl menu"))
+        self.menuButton.clicked.connect(self.menu)
         self.label.setText(_translate("Form", "<html><head/><body><p><span style=\" font-size:10pt;\">Wykonywana czynność:</span></p></body></html>"))
         self.textCurrentAction.setHtml(_translate("Form", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
@@ -786,8 +765,6 @@ class Ui_Form(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> 0 zł</span></p></body></html>"))
         self.payButton.setText(_translate("Form", "Zapłać"))
         self.payButton.clicked.connect(self.pay)
-        self.menuButton.setText(_translate("Form", "Wyświetl menu"))
-        self.menuButton.clicked.connect(self.menu)
         self.exitButton.setText(_translate("Form", "Wyjdź z restauracji"))
         self.exitButton.clicked.connect(self.exit)
 
