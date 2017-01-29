@@ -41,6 +41,7 @@ class Ui_Form(object):
         self.kontynuuj = False
         self.upewnienie = False
         self.odpowiedz = False
+        self.wiecej = False
         self.n = 0
         self.j = 0
 
@@ -430,13 +431,29 @@ class Ui_Form(object):
                     hasla.append(slownik[element])
 
         if "tak" in hasla:
-            self.odpowiedz = True
-            self.kontynuuj = True
-            self.updateAmount()
+            print('odp')
+            if self.wiecej: #kelner zaputa się co jeszcze podać - nie usuwając już zamówionych produktów zacznie rozmowe na nowo
+                print('wiecej w odp tak')
+                self.odpowiedz = True
+                self.wiecej = False
+                self.waiterDialog = self.odpowiedzi[15]
+                self.waiterSays()
+                #czyszczenie flag:
+                self.upewnienie = False
+                self.propozycja = False
+                self.odpowiedz = False
+                self.kontynuuj = False
+            else:
+                self.odpowiedz = True
+                self.kontynuuj = True
+                self.updateAmount()
         else:
-            self.odpowiedz = False
-            self.kontynuuj = False
-            self.amount = 0 #jak zamówienie sie nie zgadza to kasuje należność i zaczyna dialog na nowo lol yolo
+            if self.wiecej:
+                self.Upewnij()
+            else:
+                self.odpowiedz = False
+                self.kontynuuj = False
+                self.amount = 0 #jak zamówienie sie nie zgadza to kasuje należność i zaczyna dialog na nowo lol yolo
 
     def Upewnij(self):
          if not self.upewnienie:
@@ -460,26 +477,32 @@ class Ui_Form(object):
 
          else:
              print('funkcja upewnij: kontynuacja')
-             if self.odpowiedz: # jak zwróci wynik true to kelner przynosi zamówienie i odchodzi - status zmienia się na jedzenie
-                 self.waiterDialog = self.odpowiedzi[13]
-                 print(self.waiterDialog)
-                 self.waiterSays()
-                 self.stat = 'eating'
-                 self.display_stat()
-                 #czyszczenie flag:
-                 self.upewnienie = False
-                 self.propozycja = False
-                 self.odpowiedz = False
-                 self.kontynuuj = False
-                 with open("ZAMOWIENIE.txt","w") as zam:
-                    zam.seek(0)
-                    zam.truncate()
-                 with open("jedzenie.txt","w") as zam:
-                    zam.seek(0)
-                    zam.truncate()
-                 with open("napoj.txt","w") as zam:
-                    zam.seek(0)
-                    zam.truncate()
+             if self.odpowiedz: # jak zwróci wynik true to pyta sie czy cos jeszcze
+                 if not self.wiecej:
+                    print('czy cos wiecej')
+                    self.waiterDialog = self.odpowiedzi[14]
+                    self.waiterSays()
+                    self.wiecej = True
+                 else: #kelner przynosi zamówienie i odchodzi - status zmienia się na jedzenie - jesli juz nie chcemy nic wiecej
+                     self.waiterDialog = self.odpowiedzi[13]
+                     print(self.waiterDialog)
+                     self.waiterSays()
+                     self.stat = 'eating'
+                     self.display_stat()
+                     #czyszczenie flag:
+                     self.upewnienie = False
+                     self.propozycja = False
+                     self.odpowiedz = False
+                     self.kontynuuj = False
+                     with open("ZAMOWIENIE.txt","w") as zam:
+                        zam.seek(0)
+                        zam.truncate()
+                     with open("jedzenie.txt","w") as zam:
+                        zam.seek(0)
+                        zam.truncate()
+                     with open("napoj.txt","w") as zam:
+                        zam.seek(0)
+                        zam.truncate()
 
              else: # kelner pyta się na nowo co w takim razie chce sie zamówić, przez co klient znowu musi cos powiedzieć (tak jakby rozpoczyna rozmowe na nowo, a nie od razu proponuje coś innego)
                  #czyszczenie flag
@@ -625,21 +648,24 @@ class Ui_Form(object):
                 self.waiterSays()
                 self.powitanie = False
             else:
-                if self.kontynuuj: #sprawdza czy jesteśmy w trakcie proponowania (wypowiedź jest odp twierdzącą/przeczącą)
-                    if self.upewnienie:
-                        self.SprawdzOdp()
-                        self.Upewnij()
-                    else:
-                        print('SPR CZY PRZYJMUJESZ PROPOZYCJE')
-                        if self.propozycja:
-                            self.SprawdzOdp()
-                            print(self.odpowiedz)
-                            print('self.n: ', self.n, ' self.j: ', self.j)
-                            self.wypowiedzKelneraProponowanie()
+                if self.wiecej:
+                    self.SprawdzOdp()
                 else:
-                    if not self.propozycja:
-                        print('wyp klienta')
-                        self.wypowiedzKlienta()
+                    if self.kontynuuj: #sprawdza czy jesteśmy w trakcie proponowania (wypowiedź jest odp twierdzącą/przeczącą)
+                        if self.upewnienie:
+                            self.SprawdzOdp()
+                            self.Upewnij()
+                        else:
+                            print('SPR CZY PRZYJMUJESZ PROPOZYCJE')
+                            if self.propozycja:
+                                self.SprawdzOdp()
+                                print(self.odpowiedz)
+                                print('self.n: ', self.n, ' self.j: ', self.j)
+                                self.wypowiedzKelneraProponowanie()
+                    else:
+                        if not self.propozycja:
+                            print('wyp klienta')
+                            self.wypowiedzKlienta()
 
 
 
