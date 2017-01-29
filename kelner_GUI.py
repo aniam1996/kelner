@@ -84,7 +84,7 @@ class Ui_Form(object):
                "proponować": "propozycja", "proponuje": "propozycja", "zaproponuje": "propozycja","zaproponować": "propozycja","propozycji": "propozycja",
                "proponowac": "propozycja","zaproponowac": "propozycja","zaproponujesz":"propozycja","propozycja":"propozycja","zaproponował":"propozycja",
                "proponuj":"propozycja", "poleciłby": "propozycja", "polecenia": "propozycja","poleć": "propozycja", "polecacie":"propozycja",
-               "polecić":"propozycja", "proponujecie":"propozycja", "polecasz":"propozycja", "propozycję":"propozycja", "poleca":"propozycja","zaproponowali":"propozycja", "zaproponuj": "propozycja", "proponujesz": "propozycja",
+               "polecić":"propozycja", "polecic":"propozycja", "proponujecie":"propozycja", "polecasz":"propozycja", "propozycję":"propozycja", "poleca":"propozycja","zaproponowali":"propozycja", "zaproponuj": "propozycja", "proponujesz": "propozycja",
                "jedzenie": "jedzenie", "jedzenia": "jedzenie", "jedzeniu": "jedzenie", "jedzeniem": "jedzenie",
                "danie": "danie", "dania": "danie", "dań": "danie", "dan": "danie",
                "picia": "picie", "picie": "picie", "piciu": "picie", "piciem": "picie",
@@ -583,9 +583,14 @@ class Ui_Form(object):
                 self.pjedzenie = True
             self.wypowiedzKelneraProponowanie()
 
-
         else:
             print('konkret')
+
+            if not self.wiecej:
+                with open("ZAMOWIENIE.txt", "w") as zam:
+                    zam.seek(0)
+                    zam.truncate()
+
             napoje = self.slowniknapoje
             for haslo in hasla:
                 if haslo in napoje:
@@ -602,10 +607,6 @@ class Ui_Form(object):
                     j.write(haslo + '\n')
                     j.close()
 
-            if not self.wiecej:
-                with open("ZAMOWIENIE.txt", "w") as zam:
-                    zam.seek(0)
-                    zam.truncate()
 
             with open("MENUPICIE.txt", "r") as zamowienie, open("napoj.txt", "r") as picie, open("ZAMOWIENIE.txt","a") as ostat:
                 picie = [line.rstrip('\n') for line in picie]
