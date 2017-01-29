@@ -33,8 +33,8 @@ slownik = {"żurek": "zurek", "żurku": "zurek", "żurkiem": "zurek","zurek": "z
            "gazowana":"gaz","gazowaną":"gaz","gazowanej":"gaz",
            "niegazowana":"niegaz","niegazowanej":"niegaz","niegazowaną":"niegaz",
            "lemoniada": "lemoniada","lemoniady": "lemoniada", "lemoniadzie": "lemoniada", "lemoniadę": "lemoniada", "lemoniadą": "lemoniada","lemoniade":"lemoniada",
-           "proponować": "propozycja", "proponuje": "propozycja", "zaproponuje": "propozycja","zaproponować": "propozycja","propozycji": "propozycja",
-           "proponowac": "propozycja","zaproponowac": "propozycja","zaproponujesz":"propozycja",
+           "proponować": "propozycja", "proponuje": "propozycja", "zaproponuje": "propozycja","zaproponować": "propozycja","propozycji": "propozycja","zaproponuj":"propozycja",
+           "proponowac": "propozycja","zaproponowac": "propozycja","zaproponujesz":"propozycja","propozycje":"propozycja","propozycję":"propozycja","proponujesz":"propozycja",
            "jedzenie":"jedzenie","jedzenia":"jedzenie","jedzeniu":"jedzenie","jedzeniem":"jedzenie",
            "danie":"danie","dania":"danie","dań":"danie","dan":"danie",
            "picia":"picie","picie":"picie","piciu":"picie","piciem":"picie",
@@ -64,9 +64,12 @@ if "propozycja" in hasla:                       #klient zażyczył sobie propozy
         p.write("napoj" + '\n' + "jedzenie" + '\n')
 
 
+p.close()
+
+
 ####################################################################################################################
 picie = False
-n=open('napoj.txt','w')
+n=open('napoj.txt','a')
 
 napoje = ['cola', 'pepsi', 'fanta', 'herbata', 'gaz','niegaz', 'lemoniada']
 
@@ -81,7 +84,7 @@ n.close()
 ########################################################################################################################
 
 jedzenie = False
-j=open('jedzenie.txt','w')
+j=open('jedzenie.txt','a')
 
 danie = ['zurek', 'rosol', 'krupnik', 'bigos', 'placek', 'schabowy', 'filet', 'spaghetti', 'surowki', 'ziemniaki',
          'kasza', 'ryz', 'warzywa', 'dorsz', 'frytki']
@@ -92,7 +95,7 @@ for haslo in hasla:
         j.write(haslo + '\n')
 
 
-
+j.close()
 #######################################################################################################################
 
 podsumowanie={"Propozycja":proponowanie, "Napoj":picie, "Danie":jedzenie}
