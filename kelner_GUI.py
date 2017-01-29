@@ -85,7 +85,7 @@ class Ui_Form(object):
                "proponować": "propozycja", "proponuje": "propozycja", "zaproponuje": "propozycja","zaproponować": "propozycja","propozycji": "propozycja",
                "proponowac": "propozycja","zaproponowac": "propozycja","zaproponujesz":"propozycja","propozycja":"propozycja","zaproponował":"propozycja",
                "proponuj":"propozycja", "poleciłby": "propozycja", "polecenia": "propozycja","poleć": "propozycja", "polecacie":"propozycja",
-               "polecić":"propozycja", "proponujecie":"propozycja", "polecasz":"propozycja", "propozycję":"propozycja", "poleca":"propozycja","zaproponowali":"propozycja",
+               "polecić":"propozycja", "proponujecie":"propozycja", "polecasz":"propozycja", "propozycję":"propozycja", "poleca":"propozycja","zaproponowali":"propozycja", "zaproponuj": "propozycja", "proponujesz": "propozycja",
                "jedzenie": "jedzenie", "jedzenia": "jedzenie", "jedzeniu": "jedzenie", "jedzeniem": "jedzenie",
                "danie": "danie", "dania": "danie", "dań": "danie", "dan": "danie",
                "picia": "picie", "picie": "picie", "piciu": "picie", "piciem": "picie",
@@ -491,8 +491,8 @@ class Ui_Form(object):
                      self.waiterSays()
                      self.stat = 'eating'
                      self.display_stat()
-                     self.updateFood()
-                     self.updateDrinks()
+                     #self.updateFood()
+                     #self.updateDrinks()
                      #czyszczenie flag:
                      self.upewnienie = False
                      self.propozycja = False
@@ -517,6 +517,12 @@ class Ui_Form(object):
                  with open("ZAMOWIENIE.txt","w") as zam:
                     zam.seek(0)
                     zam.truncate()
+                 with open("jedzenie.txt","w") as zam:
+                     zam.seek(0)
+                     zam.truncate()
+                 with open("napoj.txt","w") as zam:
+                     zam.seek(0)
+                     zam.truncate()
                  self.amount = 0
                  self.foodText = ''
                  self.drinksText = ''
@@ -603,7 +609,7 @@ class Ui_Form(object):
                 if haslo in napoje:
                     self.picie = True
                     n.write(haslo + '\n')
-                    self.drinksText += haslo + ', '
+                    self.drinksText += haslo + ' '
             n.close()
 
             self.jedzenie = False
@@ -613,7 +619,7 @@ class Ui_Form(object):
                 if haslo in danie:
                     self.jedzenie = True
                     j.write(haslo + '\n')
-                    self.foodText += haslo + ', '
+                    self.foodText += haslo + ' '
             j.close()
 
             if not self.wiecej:
