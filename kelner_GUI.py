@@ -440,7 +440,7 @@ class Ui_Form(object):
 
     def Upewnij(self):
          if not self.upewnienie:
-             if self.odpowiedz:
+             if self.odpowiedz or not self.propozycja:
                  print('funkcja Upewnij')
                  s = ", "
                  czylizam = self.odpowiedzi[5]
@@ -471,6 +471,15 @@ class Ui_Form(object):
                  self.propozycja = False
                  self.odpowiedz = False
                  self.kontynuuj = False
+                 with open("ZAMOWIENIE.txt","w") as zam:
+                    zam.seek(0)
+                    zam.truncate()
+                 with open("jedzenie.txt","w") as zam:
+                    zam.seek(0)
+                    zam.truncate()
+                 with open("napoj.txt","w") as zam:
+                    zam.seek(0)
+                    zam.truncate()
 
              else: # kelner pyta się na nowo co w takim razie chce sie zamówić, przez co klient znowu musi cos powiedzieć (tak jakby rozpoczyna rozmowe na nowo, a nie od razu proponuje coś innego)
                  #czyszczenie flag
@@ -525,6 +534,7 @@ class Ui_Form(object):
 
 
     def wypowiedzKlienta(self):
+        print('funkcja wypowiedzKlienta')
 
         x = self.clientDialog  # wpisz zdanie
         zapisz = x.split()  # pod zmienną 'zapisz' podstawiamy liste slow oddzielonych przecinkiem
@@ -556,6 +566,7 @@ class Ui_Form(object):
             self.wypowiedzKelneraProponowanie()
 
         else:
+            print('konkret')
             self.picie = False
             n = open('napoj.txt', 'w')
             napoje = self.slowniknapoje
@@ -598,6 +609,7 @@ class Ui_Form(object):
                 self.waiterDialog = self.odpowiedzi[12]
                 self.waiterSays()
             else:
+                print('klient odpowiedzial na pytanie')
                 self.Upewnij()
 
 
@@ -626,8 +638,9 @@ class Ui_Form(object):
                             self.wypowiedzKelneraProponowanie()
                 else:
                     if not self.propozycja:
-                        self.wypowiedzKlienta()
                         print('wyp klienta')
+                        self.wypowiedzKlienta()
+
 
 
     def eat(self):
